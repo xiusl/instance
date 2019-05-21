@@ -11,3 +11,7 @@ from mongoengine import connect
 connect(alias=MONGO_DB, host=MONGO_URL)
 
 
+
+SMS_ACCOUNT = os.getenv('SMS_ACCOUNT') or ''
+SMS_TOKEN = os.getenv('SMS_TOKEN') or ''
+

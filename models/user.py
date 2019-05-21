@@ -14,7 +14,7 @@ import time
 import hmac, hashlib, base64
 import random
 
-DB_NANE = 'instance_db'
+DB_NAME = 'instance_db'
 
 class User(Document):
     pk_name = 'id'
@@ -55,7 +55,7 @@ class User(Document):
     def get_token(self, timestamp=None, expired_at=None):
         timestamp = timestamp or int(time.time())
         expired_at = expired_at or (timestamp+86400*30)
-        message = '%s:%s:%s', % (self.id, timestamp, expired_at)
+        message = '%s:%s:%s' % (self.id, timestamp, expired_at)
         sign = hmac_sha256(self.password, message)
         signed_message = '%s$%s' % (message, sign)
         token = base64.b64encode(signed_message.encode('utf8'))
@@ -72,7 +72,7 @@ class User(Document):
         rels = UserRelation.objects(follower_id=self.id)
         return list([rel.followed_id for rel in rels])
 
-    def is_following(self, user_id)：
+    def is_following(self, user_id):
         u_id= ObjectId(user_id)
         return u_id and u_id in self.followed_ids
 
@@ -149,3 +149,33 @@ class UserRelation(Document):
     followed_id = ObjectIdField()
     created_at = DateTimeField(default=datetime.datetime.now())
 
+
+
+class VerifyCode(Document):
+    meta = {
+        'db_alias': DB_NAME,
+        'index_background': True,
+        'indexes': [
+            'key',
+            {'fields': ('expired_at', ), 'expireAfterSeconds': 0},
+        ],
+    }
+
+    id = ObjectIdField(primary_key=True, default=ObjectId)
+    key = StringField()
+    code = StringField()
+    expired_at = DateTimeField()
+    created_at = DateTimeField(default=datetime.datetime.now)
+
+    @classmethod
+    def get(cls, key):
+        return cls.objects(key=key).order_by("-id").first()
+
+    @classmethod
+    def create(cls, key, ttl=600):
+        vc = cls(key=key)
+        vc.code = str(random.randint(1000, 9999))
+        vc.expired_at = datetime.datetime.now() + \
+                datetime.timedelta(seconds=ttl)
+        vc.save()
+        return vc

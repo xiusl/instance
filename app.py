@@ -5,7 +5,7 @@ from flask import Flask, current_app
 from flask_restful import Api
 
 from instance.utils import output_json
-from instance.resource import Users
+from instance.resource import Users, VerifyCodes, UserFollowers
 from instance.errors import ApiBaseError, ResourceDoesNotExist, MissingRequiredParameter
 import instance.settings
 
@@ -44,7 +44,8 @@ def handle_api_error(error):
 
 
 api.add_resource(Users, '/users')
-
+api.add_resource(VerifyCodes, '/verifycodes')
+api.add_resource(UserFollowers, '/users/<id>/followers')
 
 if __name__ == '__main__':
     app.run()
