@@ -24,3 +24,9 @@ class MissingRequiredParameter(ApiBaseError):
         self.params = params
         self.message = self.message + ', '.join(params)
 
+class BadRequestError(ApiBaseError):
+    code = 400
+    message = ""
+
+    def __init__(self, msg):
+        self.message = self.message + msg

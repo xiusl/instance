@@ -15,3 +15,7 @@ connect(alias=MONGO_DB, host=MONGO_URL)
 SMS_ACCOUNT = os.getenv('SMS_ACCOUNT') or ''
 SMS_TOKEN = os.getenv('SMS_TOKEN') or ''
 
+
+SMS_TENC_ID = os.getenv('SMS_TENC_ID') or ''
+SMS_TENC_KEY = os.getenv('SMS_TENC_KEY') or ''
+

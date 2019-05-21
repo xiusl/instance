@@ -2,3 +2,4 @@ flask
 flask-restful
 mongoengine
 twilio
+qcloudsms_py

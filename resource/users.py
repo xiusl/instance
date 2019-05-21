@@ -2,7 +2,7 @@
 # author:xsl
 
 from flask_restful import reqparse, Resource
-from instance.errors import MissingRequiredParameter
+from instance.errors import BadRequestError, MissingRequiredParameter
 from instance.utils import send_sms_code
 from instance.models import VerifyCode
 
@@ -33,9 +33,12 @@ class UserFollowers(Resource):
 
 class VerifyCodes(Resource):
 
-    def post(self):
+    def get(self):
         args = parser.parse_args()
         phone = args.get('phone')
         vc = VerifyCode.create(phone)
         ok = send_sms_code(phone, vc.code)
+        if not ok:
+            raise BadRequestError('Send Code Failure.')
         return {'ok': 1}
+

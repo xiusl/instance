@@ -6,6 +6,8 @@ import json
 from instance import settings
 from twilio.rest import Client
 
+from qcloudsms_py import SmsSingleSender
+
 def output_json(data, code, headers=None, error=None, extra=None):
     msg = data.get('message')
     if msg:
@@ -36,6 +38,25 @@ def send_sms(to, content):
         return False
     return True
 
+def send_sms_v2(to, content):
+    appid = settings.SMS_TENC_ID
+    appkey = settings.SMS_TENC_KEY
+    ssender = SmsSingleSender(appid, appkey)
+    sms_type = 0
+    try:
+        result = ssender.send(sms_type,
+                86, 
+                to, 
+                content,
+                extend='',
+                ext='')
+    except Exception as e:
+        return False
+    code = int(result.get('result'))
+    if code != 0:
+        return False
+    return True
+
 def send_sms_code(to, code):
-    content = '验证码 %s' % code
-    return send_sms(to, content)
+    content = '验证码%s，如非本人操作请忽略。' % code
+    return send_sms_v2(to, content)
