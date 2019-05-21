@@ -5,7 +5,7 @@ from flask import make_response
 import json
 
 
-def output_json(data, code, error=None, extra=None):
+def output_json(data, code, headers=None, error=None, extra=None):
     msg = data.get('message')
     if msg:
         error = msg
@@ -19,4 +19,5 @@ def output_json(data, code, error=None, extra=None):
     }
     
     resp = make_response(json.dumps(resp_data), code)
+    resp.headers.extend(headers or {})
     return resp

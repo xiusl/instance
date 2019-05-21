@@ -7,6 +7,7 @@ from flask_restful import Api
 from instance.utils import output_json
 from instance.resource import Users
 from instance.errors import ApiBaseError, ResourceDoesNotExist, MissingRequiredParameter
+import instance.settings
 
 class MyApi(Api):
 

@@ -2,6 +2,8 @@
 # author:xsl
 
 from flask_restful import Resource
+from instance.errors import MissingRequiredParameter
+
 
 class Users(Resource):
 
@@ -9,3 +11,9 @@ class Users(Resource):
         return {'name': 'Tom'}
 
 
+    def post(self, *args, **kwargs):
+        raise MissingRequiredParameter(['id'])
+
+
+    def _follow(self):
+        return {'ok': 1}
