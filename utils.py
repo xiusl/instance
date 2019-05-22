@@ -1,11 +1,23 @@
 # coding=utf-8
 # author:xsl
 
-from flask import make_response, jsonify
+from flask import g, make_response, jsonify
 import json
+from functools import wraps
 from instance import settings
+from instance.errors import LoginRequiredError
 from twilio.rest import Client
 from qcloudsms_py import SmsSingleSender
+
+
+def login_required(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        user = getattr(g, 'user', None)
+        if not user:
+            raise LoginRequiredError()
+        return func(*args, **kwargs)
+    return wrapper
 
 
 def output_json(data, code, headers=None, error=None, extra=None):

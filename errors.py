@@ -1,8 +1,6 @@
 # coding=utf-8
 # author:xsl
 
-from instance.utils import output_json
-
 
 class ApiBaseError(Exception):
     def to_dict(self):
@@ -15,6 +13,11 @@ class ApiBaseError(Exception):
 class ResourceDoesNotExist(ApiBaseError):
     code = 404
     message = 'A resource with that ID no longer exists.'
+
+
+class LoginRequiredError(ApiBaseError):
+    code = 401
+    message = 'Please login'
 
 
 class MissingRequiredParameter(ApiBaseError):

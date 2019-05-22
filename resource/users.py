@@ -4,7 +4,7 @@
 import datetime
 from flask_restful import reqparse, Resource
 from instance.errors import BadRequestError, MissingRequiredParameter
-from instance.utils import send_sms_code
+from instance.utils import send_sms_code, login_required
 from instance.models import User, VerifyCode
 
 parser = reqparse.RequestParser()
@@ -13,7 +13,10 @@ parser.add_argument('code')
 
 class Users(Resource):
 
-    def get(self, *args, **kwargs):
+    @login_required
+    def get(self):
+        print("000000000")
+        print(self)
         return {'name': 'Tom'}
 
 

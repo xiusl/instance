@@ -1,9 +1,10 @@
 # coding=utf-8
 # author:xsl
 
-from flask import Flask, current_app
+from flask import Flask, g, current_app, request
 from flask_restful import Api
 
+from instance.models import User
 from instance.utils import output_json
 from instance.resource import Authorizations, Users, VerifyCodes, UserFollowers
 from instance.errors import ApiBaseError, ResourceDoesNotExist, MissingRequiredParameter
@@ -37,6 +38,14 @@ errors = {
 app = Flask(__name__)
 api = MyApi(app, catch_all_404s=True, errors=errors)
 
+
+@app.before_request
+def before_request():
+    token = request.headers.get("X-Token")
+    g.user = None
+    if token:
+        u = User.get_by_token(token)
+        g.user = u
 
 @app.errorhandler(ApiBaseError)
 def handle_api_error(error):

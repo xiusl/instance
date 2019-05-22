@@ -107,7 +107,7 @@ class User(Document):
         return True
 
     @classmethod
-    def get_by_tokne(cls, token):
+    def get_by_token(cls, token):
         try:
             token = base64.b64decode(token).decode('utf8')
             message, sign = token.split('$')
@@ -121,7 +121,7 @@ class User(Document):
         if not user:
             return None
 
-        if sign != hamc_sha256(user.password, message):
+        if sign != hmac_sha256(user.password, message):
             return None
 
         return user
