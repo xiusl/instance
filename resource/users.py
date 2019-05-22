@@ -47,6 +47,27 @@ class UserFollowers(Resource):
         return {'ok': 1}
 
 
+class Authorizations(Resource):
+
+    def post(self):
+        args = parser.parse_args()
+        phone = args.get('phone')
+        code = args.get('code')
+        if not phone or not code:
+            raise MissingRequiredParameter(['phone', 'code'])
+        vc = VerifyCode.get(phone)
+        if int(vc.code) != int(code):
+            raise BadRequestError('VerifyCode Error')
+        if vc.expired_at < datetime.datetime.now():
+            raise BadRequestError('VerifyCode Expired')
+        user = User.objects(phone=phone).first()
+        if not user:
+            user = User()
+            user.phone = phone
+            user.password = 'Asd110#.'
+            user.save()
+        return user.pack(with_token=True)
+
 
 class VerifyCodes(Resource):
 

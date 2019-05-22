@@ -5,7 +5,7 @@ from flask import Flask, current_app
 from flask_restful import Api
 
 from instance.utils import output_json
-from instance.resource import Users, VerifyCodes, UserFollowers
+from instance.resource import Authorizations, Users, VerifyCodes, UserFollowers
 from instance.errors import ApiBaseError, ResourceDoesNotExist, MissingRequiredParameter
 import instance.settings
 
@@ -42,7 +42,7 @@ api = MyApi(app, catch_all_404s=True, errors=errors)
 def handle_api_error(error):
     return output_json(error.to_dict(), error.code)
 
-
+api.add_resource(Authorizations, '/authorizations')
 api.add_resource(Users, '/users')
 api.add_resource(VerifyCodes, '/verifycodes')
 api.add_resource(UserFollowers, '/users/<id>/followers')
