@@ -1,12 +1,12 @@
 # coding=utf-8
 # author:xsl
 
-from flask import make_response
+from flask import make_response, jsonify
 import json
 from instance import settings
 from twilio.rest import Client
-
 from qcloudsms_py import SmsSingleSender
+
 
 def output_json(data, code, headers=None, error=None, extra=None):
     msg = data.get('message')
@@ -21,7 +21,7 @@ def output_json(data, code, headers=None, error=None, extra=None):
         'extra': extra
     }
     
-    resp = make_response(json.dumps(resp_data), code)
+    resp = make_response(jsonify(resp_data), code)
     resp.headers.extend(headers or {})
     return resp
 

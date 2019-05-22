@@ -1,13 +1,15 @@
 # coding=utf-8
 # author:xsl
 
+import datetime
 from flask_restful import reqparse, Resource
 from instance.errors import BadRequestError, MissingRequiredParameter
 from instance.utils import send_sms_code
-from instance.models import VerifyCode
+from instance.models import User, VerifyCode
 
 parser = reqparse.RequestParser()
 parser.add_argument('phone')
+parser.add_argument('code')
 
 class Users(Resource):
 
@@ -17,7 +19,22 @@ class Users(Resource):
 
     def post(self):
         args = parser.parse_args()
-        raise MissingRequiredParameter(['id'])
+        phone = args.get('phone')
+        code = args.get('code')
+        if not phone or not code:
+            raise MissingRequiredParameter(['phone', 'code'])
+        vc = VerifyCode.get(phone)
+        if int(vc.code) != int(code):
+            raise BadRequestError('VerifyCode Error')
+        if vc.expired_at < datetime.datetime.now():
+            raise BadRequestError('VerifyCode Expired')
+        user = User.objects(phone=phone).first()
+        if not user:
+            user = User()
+            user.phone = phone
+            user.password = 'Asd110#.'
+            user.save()
+        return user.pack(with_token=True)
 
 
     def _follow(self):

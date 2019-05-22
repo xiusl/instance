@@ -8,6 +8,7 @@ from mongoengine import (
     IntField,
     DateTimeField
 )
+from werkzeug.security import generate_password_hash, check_password_hash
 from bson import ObjectId
 import datetime
 import time
@@ -15,6 +16,15 @@ import hmac, hashlib, base64
 import random
 
 DB_NAME = 'instance_db'
+
+
+def hmac_sha256(key, message):
+    key = key.encode('utf8')
+    message = message.encode('utf8')
+    sign = hmac.new(key, message, digestmod=hashlib.sha256).digest()
+    sign = '.'.join([('%02x' % b) for b in sign])
+    return sign
+
 
 class User(Document):
     pk_name = 'id'
@@ -37,7 +47,7 @@ class User(Document):
     followed_count = IntField(default=0)
     following_count = IntField(default=0)
 
-    def sace(self, *args, **kwargs):
+    def save(self, *args, **kwargs):
         if self.password and \
                 (self.password.count('$') < 2 or len(self.password) < 50):
             self.password = generate_password_hash(self.password)
@@ -46,7 +56,7 @@ class User(Document):
         if not self.name and self.email:
             self.name = self.email.split("@")[0]
         if not self.name and self.phone:
-            self.name = 'User%s' % self.phone[-4:]
+            self.name = 'user%s' % self.phone[-4:]
         return super(User, self).save(*args, **kwargs)
 
     def check_password(self, passowrd):
@@ -172,7 +182,7 @@ class VerifyCode(Document):
         return cls.objects(key=key).order_by("-id").first()
 
     @classmethod
-    def create(cls, key, ttl=600):
+    def create(cls, key, ttl=3600):
         vc = cls(key=key)
         vc.code = str(random.randint(1000, 9999))
         vc.expired_at = datetime.datetime.now() + \
