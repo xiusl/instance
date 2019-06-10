@@ -77,6 +77,8 @@ class VerifyCodes(Resource):
     def get(self):
         args = parser.parse_args()
         phone = args.get('phone')
+        if not phone:
+            raise MissingRequiredParameter(['phone'])
         vc = VerifyCode.create(phone)
         ok = send_sms_code(phone, vc.code)
         if not ok:

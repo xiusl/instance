@@ -2,6 +2,13 @@
 # author:xsl
 
 import os
+import sys
+
+PROJECT_DIR = os.path.abspath(os.path.dirname(__file__))
+PARENT_DIR = os.path.join(PROJECT_DIR, os.pardir)
+
+sys.path.append(PARENT_DIR)
+sys.path.append(PROJECT_DIR)
 
 MONGO_DB = os.getenv('MONGO_DB') or 'instance_db'
 MONGO_URL = os.getenv('MONDO_URL') or 'mongodb://127.0.0.1:27017/instance_db'
