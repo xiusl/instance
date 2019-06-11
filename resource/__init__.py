@@ -2,3 +2,4 @@
 # author:xsl
 
 from .users import *
+from .statuses import *

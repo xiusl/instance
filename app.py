@@ -4,10 +4,10 @@
 from flask import Flask, g, current_app, request
 from flask_restful import Api
 
-import settings
+#import settings
 from instance.models import User
 from instance.utils import output_json
-from instance.resource import Authorizations, Users, VerifyCodes, UserFollowers
+from instance.resource import StatusesRes, StatusRes, Authorizations, Users, VerifyCodes, UserFollowers
 from instance.errors import ApiBaseError, ResourceDoesNotExist, MissingRequiredParameter
 
 class MyApi(Api):
@@ -55,6 +55,8 @@ api.add_resource(Authorizations, '/authorizations')
 api.add_resource(Users, '/users')
 api.add_resource(VerifyCodes, '/verifycodes')
 api.add_resource(UserFollowers, '/users/<id>/followers')
+api.add_resource(StatusesRes, '/statuses')
+api.add_resource(StatusRes, '/statuses/<id>')
 
 if __name__ == '__main__':
     app.run()

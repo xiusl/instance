@@ -21,7 +21,12 @@ def login_required(func):
 
 
 def output_json(data, code, headers=None, error=None, extra=None):
-    msg = data.get('message')
+    
+    try:
+        msg = data.get('message')
+    except:
+        msg = None
+
     if msg:
         error = msg
         data = None
