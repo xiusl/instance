@@ -7,7 +7,15 @@ from flask_restful import Api
 #import settings
 from instance.models import User
 from instance.utils import output_json
-from instance.resource import StatusesRes, StatusRes, Authorizations, Users, VerifyCodes, UserFollowers
+from instance.resource import (
+    StatusesRes, 
+    StatusRes, 
+    Authorizations, 
+    UsersRes, 
+    UserRes,
+    VerifyCodes, 
+    UserFollowers
+)
 from instance.errors import ApiBaseError, ResourceDoesNotExist, MissingRequiredParameter
 
 class MyApi(Api):
@@ -52,7 +60,8 @@ def handle_api_error(error):
     return output_json(error.to_dict(), error.code)
 
 api.add_resource(Authorizations, '/authorizations')
-api.add_resource(Users, '/users')
+api.add_resource(UsersRes, '/users')
+api.add_resource(UserRes, '/users/<id>')
 api.add_resource(VerifyCodes, '/verifycodes')
 api.add_resource(UserFollowers, '/users/<id>/followers')
 api.add_resource(StatusesRes, '/statuses')

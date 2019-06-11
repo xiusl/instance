@@ -35,7 +35,7 @@ class User(Document):
 
     id = ObjectIdField(primary_key=True, default=ObjectId)
     phone = StringField(unique=True)
-    email = StringField(unique=True)
+    email = StringField()
     name = StringField()
     password = StringField()
     avatar = StringField()
@@ -73,7 +73,11 @@ class User(Document):
 
     @property
     def follower_ids(self):
+        print(self.id)
+        print(UserRelation.objects)
         rels = UserRelation.objects(followed_id=self.id)
+        print("-------------")
+        print(rels)
         return list([rel.follower_id for rel in rels])
 
     @property
@@ -88,6 +92,7 @@ class User(Document):
 
     def is_followed(self, user_id):
         u_id = ObjectId(user_id)
+        print(u_id)
         return u_id and u_id in self.follower_ids
 
     def follow(self, user_id):
@@ -182,7 +187,7 @@ class VerifyCode(Document):
         return cls.objects(key=key).order_by("-id").first()
 
     @classmethod
-    def create(cls, key, ttl=3600):
+    def create(cls, key, ttl=36000):
         vc = cls(key=key)
         vc.code = str(random.randint(1000, 9999))
         vc.expired_at = datetime.datetime.now() + \

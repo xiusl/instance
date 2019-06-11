@@ -2,8 +2,10 @@
 # author:xsl
 
 import datetime
+from bson import ObjectId
+from flask import g
 from flask_restful import reqparse, Resource
-from instance.errors import BadRequestError, MissingRequiredParameter
+from instance.errors import BadRequestError, ResourceDoesNotExist, MissingRequiredParameter
 from instance.utils import send_sms_code, login_required
 from instance.models import User, VerifyCode
 
@@ -11,7 +13,20 @@ parser = reqparse.RequestParser()
 parser.add_argument('phone')
 parser.add_argument('code')
 
-class Users(Resource):
+class UserRes(Resource):
+
+    def get(self, id):
+        if not id:
+            raise MissingRequiredParameter(['id'])
+        user = User.objects(id=ObjectId(id)).first()
+        if not user:
+            raise ResourceDoesNotExist()
+        c_user = g.user
+        if c_user:
+            return user.pack(user_id=c_user.id)
+        return user.pack()
+
+class UsersRes(Resource):
 
     @login_required
     def get(self):
@@ -40,14 +55,21 @@ class Users(Resource):
         return user.pack(with_token=True)
 
 
-    def _follow(self):
-        return {'ok': 1}
 
 
 class UserFollowers(Resource):
 
-    def post(self, user_id):
-        return {'ok': 1}
+    @login_required
+    def post(self, id):
+        if not id:
+            raise MissingRequiredParameter(['user_id'])
+        user = User.objects(id=ObjectId(id)).first()
+        if not user:
+            raise ResourceDoesNotExist()
+        c_user = g.user
+        c_user.follow(user.id)
+        return user.pack(user_id=c_user.id)
+
 
 
 class Authorizations(Resource):
