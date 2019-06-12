@@ -7,7 +7,7 @@ from flask import g
 from flask_restful import reqparse, Resource
 from instance.errors import BadRequestError, ResourceDoesNotExist, MissingRequiredParameter
 from instance.utils import send_sms_code, login_required
-from instance.models import User, UserRelation, VerifyCode
+from instance.models import User, UserRelation, UserAction, Status, VerifyCode
 
 parser = reqparse.RequestParser()
 parser.add_argument('phone')
@@ -144,3 +144,16 @@ class VerifyCodes(Resource):
             raise BadRequestError('Send Code Failure.')
         return {'ok': 1}
 
+
+class UserStatusLikesRes(Resource):
+
+    def get(self, id):
+        if not id:
+            raise MissingRequiredParameter(['id'])
+        u = User.objects(id=ObjectId(id)).first()
+        if not u:
+            raise ResourceDoesNotExist()
+        rels = UserAction.objects(user_id=u.id, action=UserAction.ACTION_LIKE).limit(10)
+        status_ids = list([rel.status_id for rel in rels])
+        statuses = list([Status.objects(id=ObjectId(s_id)).first().pack(user_id=g.user_id) for s_id in status_ids])
+        return statuses

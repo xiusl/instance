@@ -13,7 +13,7 @@ from mongoengine import (
 from bson import ObjectId
 import datetime
 import time
-from instance.models import User
+from instance.models import User, UserAction
 
 DB_NAME = 'instance_db'
 
@@ -61,7 +61,8 @@ class Status(Document):
 
 
     def is_liked(self, user_id):
-        return user_id an user_id in self.likers
+        user_id = str(user_id)
+        return user_id and user_id in self.likers
 
 
 
