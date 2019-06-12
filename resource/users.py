@@ -7,7 +7,7 @@ from flask import g
 from flask_restful import reqparse, Resource
 from instance.errors import BadRequestError, ResourceDoesNotExist, MissingRequiredParameter
 from instance.utils import send_sms_code, login_required
-from instance.models import User, VerifyCode
+from instance.models import User, UserRelation, VerifyCode
 
 parser = reqparse.RequestParser()
 parser.add_argument('phone')
@@ -60,6 +60,20 @@ class UsersRes(Resource):
 class UserFollowers(Resource):
 
     @login_required
+    def get(self, id):
+        if not id:
+            raise MissingRequiredParameter(['id'])
+        user = User.objects(id=ObjectId(id)).first()
+        if not user:
+            raise ResourceDoesNotExist()
+        rels = UserRelation.objects(followed_id=user.id).skip(0).limit(10)
+        us = [rel.follower_id for rel in rels]
+        c_user = g.user
+        uss = list([User.objects(id=uid).first().pack(user_id=c_user.id) for uid in us])
+        return uss
+
+
+    @login_required
     def post(self, id):
         if not id:
             raise MissingRequiredParameter(['user_id'])
@@ -67,8 +81,31 @@ class UserFollowers(Resource):
         if not user:
             raise ResourceDoesNotExist()
         c_user = g.user
-        c_user.follow(user.id)
+        if not c_user.follow(user.id):
+            return {"msg": "follow failure"}
+        c_user.followed_count += 1
+        c_user.save()
+        user.following_count += 1
+        user.save()
         return user.pack(user_id=c_user.id)
+
+    @login_required
+    def delete(self, id):
+        if not id:
+            raise MissingRequiredParameter(['user_id'])
+        user = User.objects(id=ObjectId(id)).first()
+        if not user:
+            raise ResourceDoesNotExist()
+        c_user = g.user
+        if not c_user.unfollow(user.id):
+            return {"msg": "unfollow failure"}
+        c_user.followed_count -= 1
+        c_user.save()
+        user.following_count -= 1
+        user.save()
+        return user.pack(user_id=c_user.id)
+
+
 
 
 

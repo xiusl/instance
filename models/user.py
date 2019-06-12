@@ -72,38 +72,34 @@ class User(Document):
         return token.decode('utf8')
 
     @property
-    def follower_ids(self):
-        print(self.id)
-        print(UserRelation.objects)
+    def followers(self):
         rels = UserRelation.objects(followed_id=self.id)
-        print("-------------")
-        print(rels)
         return list([rel.follower_id for rel in rels])
 
     @property
-    def followed_ids(self):
+    def followeds(self):
         # self follow
         rels = UserRelation.objects(follower_id=self.id)
         return list([rel.followed_id for rel in rels])
 
     def is_following(self, user_id):
         u_id= ObjectId(user_id)
-        return u_id and u_id in self.followed_ids
+        return u_id and u_id in self.followeds
 
     def is_followed(self, user_id):
         u_id = ObjectId(user_id)
         print(u_id)
-        return u_id and u_id in self.follower_ids
+        return u_id and u_id in self.followers
 
     def follow(self, user_id):
-        if user_id in self.followed_ids:
+        if user_id in self.followeds:
             return False
         rel = UserRelation(followed_id=user_id, follower_id=self.id)
         rel.save()
         return True
 
     def unfollow(self, user_id):
-        if user_id in self.follower_ids:
+        if user_id in self.followers:
             return False
         rel = UserRelation.objects(followed_id=user_id, follower_id=self.id)
         if not rel:
@@ -159,7 +155,7 @@ class UserRelation(Document):
         'db_alias': DB_NAME        
     }
 
-    id = ObjectIdField(primart_key=True, default=ObjectId)
+    id = ObjectIdField(primary_key=True, default=ObjectId)
     follower_id = ObjectIdField()
     followed_id = ObjectIdField()
     created_at = DateTimeField(default=datetime.datetime.now())
