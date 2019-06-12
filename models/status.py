@@ -37,6 +37,8 @@ class Status(Document):
 
     def pack(self, user_id=None):
         u = User.objects(id=ObjectId(self.user_id)).first()
+        if not u:
+            u = User()
         s_dict = {
             'id': str(self.id),
             'content': self.content,
@@ -46,7 +48,7 @@ class Status(Document):
             'status': self.status,
             'digg_count': self.digg_count,
             'bury_count': self.bury_count,
-            'user': u.pack()
+            'user': u.pack(user_id)
         }
         return s_dict
 

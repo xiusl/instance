@@ -13,8 +13,8 @@ from qcloudsms_py import SmsSingleSender
 def login_required(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
-        user = getattr(g, 'user', None)
-        if not user:
+        user_id = getattr(g, 'user_id', None)
+        if not user_id:
             raise LoginRequiredError()
         return func(*args, **kwargs)
     return wrapper

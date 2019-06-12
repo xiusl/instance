@@ -14,7 +14,8 @@ from instance.resource import (
     UsersRes, 
     UserRes,
     VerifyCodes, 
-    UserFollowers
+    UserFollowers,
+    UserStatusesRes
 )
 from instance.errors import ApiBaseError, ResourceDoesNotExist, MissingRequiredParameter
 
@@ -50,10 +51,12 @@ api = MyApi(app, catch_all_404s=True, errors=errors)
 @app.before_request
 def before_request():
     token = request.headers.get("X-Token")
-    g.user = None
+    g.user = User()
+    g.user_id = None
     if token:
         u = User.get_by_token(token)
         g.user = u
+        g.user_id = u.id
 
 @app.errorhandler(ApiBaseError)
 def handle_api_error(error):
@@ -66,6 +69,7 @@ api.add_resource(VerifyCodes, '/verifycodes')
 api.add_resource(UserFollowers, '/users/<id>/followers')
 api.add_resource(StatusesRes, '/statuses')
 api.add_resource(StatusRes, '/statuses/<id>')
+api.add_resource(UserStatusesRes, '/users/<user_id>/statuses')
 
 if __name__ == '__main__':
     app.run()

@@ -19,6 +19,10 @@ class LoginRequiredError(ApiBaseError):
     code = 401
     message = 'Please login'
 
+class OperationForbiddenError(ApiBaseError):
+    code = 403
+    message = 'Operation forbidden'
+
 
 class MissingRequiredParameter(ApiBaseError):
     code = 400

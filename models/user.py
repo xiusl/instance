@@ -72,6 +72,10 @@ class User(Document):
         return token.decode('utf8')
 
     @property
+    def is_admin(self):
+        return self.level == 9
+
+    @property
     def followers(self):
         rels = UserRelation.objects(followed_id=self.id)
         return list([rel.follower_id for rel in rels])
