@@ -30,7 +30,7 @@ class Status(Document):
     updated_at = DateTimeField(default=datetime.datetime.now)
     status = IntField(default=0)
     user_id = ObjectIdField()
-    digg_count = IntField(default=0)
+    like_count = IntField(default=0)
     bury_count = IntField(default=0)
     
 
@@ -46,9 +46,22 @@ class Status(Document):
             'created_at': self.created_at,
             'updated_at': self.updated_at,
             'status': self.status,
-            'digg_count': self.digg_count,
+            'like_count': self.like_count,
+            'is_liked': self.is_liked(user_id),
             'bury_count': self.bury_count,
             'user': u.pack(user_id)
         }
         return s_dict
+
+
+    @property
+    def likers(self):
+        rels = UserAction.objects(status_id=self.id, action=UserAction.ACTION_LIKE)
+        return list([str(rel.user_id) for rel in rels])
+
+
+    def is_liked(self, user_id):
+        return user_id an user_id in self.likers
+
+
 

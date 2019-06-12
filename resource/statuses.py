@@ -12,7 +12,7 @@ from instance.errors import (
     OperationForbiddenError
 )
 from instance.utils import login_required
-from instance.models import User, Status
+from instance.models import User, Status, UserAction
 
 parser = reqparse.RequestParser()
 
@@ -110,5 +110,34 @@ class UserStatusesRes(Resource):
         return [s.pack(g.user_id) for s in ss]
 
 
+class StatusLikesRes(Resource):
 
+    @login_required
+    def post(self, id):
+        if not id:
+            raise MissingRequiredParameter(['id'])
+        s = Status.objects(id=ObjectId(id)).first()
+        if not s:
+            raise ResourceDoesNotExist()
+        if s.is_liked(g.user_id):
+            return {"msg": "like faliure"}
+        r = UserRelation(status_id=s.id, user_id=g.user_id, action=UserRelation.ACTION_LIKE)
+        r.save()
+        return s.pack(user_id=g.user_id)
+
+
+    @login_required
+    def delele(self, id):
+        if not id:
+            raise MissingRequiredParameter(['id'])
+        s = Status.objects(id=ObjectId(id)).first()
+        if not s:
+            raise ResourceDoesNotExist()
+        if not s.is_liked(g.user_id):
+            return {"msg": "unlike faliure"}
+        r = UserRelation.objects(status_id=s.id, user_id=g.user_id, action=UserRelation.ACTION_LIKE)
+        r.delete()
+        s.like_count -= 1
+        s.save()
+        return {"msg": "like success"}
 

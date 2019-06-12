@@ -194,3 +194,22 @@ class VerifyCode(Document):
                 datetime.timedelta(seconds=ttl)
         vc.save()
         return vc
+
+
+class UserAction(Document):
+    meta = {
+        'db_alias': DB_NAME
+    }
+    
+    ACTION_LIKE = 'like'
+    ACTION_UNLIKE = 'unlike'
+
+
+    id = ObjectIdField(primary_key=True, default=ObjectId)
+    status_id = ObjectIdField()
+    user_id = ObjectIdField()
+    action = StringField()
+    created_at = DateTimeField(default=datetime.datetime.now)
+
+
+
