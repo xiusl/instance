@@ -69,7 +69,7 @@ def send_sms_v2(to, content):
                 ext='')
     except Exception as e:
         return False
-    code = int(result.get('result'))
+    code = int(result.get('result', -1))
     if code != 0:
         return False
     return True

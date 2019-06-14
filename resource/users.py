@@ -141,6 +141,7 @@ class VerifyCodes(Resource):
         vc = VerifyCode.create(phone)
         ok = send_sms_code(phone, vc.code)
         if not ok:
+            vc.delete()
             raise BadRequestError('Send Code Failure.')
         return {'ok': 1}
 
