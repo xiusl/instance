@@ -115,6 +115,7 @@ class Authorizations(Resource):
         args = parser.parse_args()
         phone = args.get('phone')
         code = args.get('code')
+        print(phone)
         if not phone or not code:
             raise MissingRequiredParameter(['phone', 'code'])
         vc = VerifyCode.get(phone)
@@ -141,7 +142,7 @@ class VerifyCodes(Resource):
         vc = VerifyCode.create(phone)
         ok = send_sms_code(phone, vc.code)
         if not ok:
-            vc.delete()
+#            vc.delete()
             raise BadRequestError('Send Code Failure.')
         return {'ok': 1}
 

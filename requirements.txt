@@ -1,5 +1,6 @@
 flask
 flask-restful
+flask-cors
 mongoengine
 twilio
 qcloudsms_py

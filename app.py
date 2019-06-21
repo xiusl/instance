@@ -1,8 +1,9 @@
 # coding=utf-8
 # author:xsl
 
-from flask import Flask, g, current_app, request
+from flask import Flask, g, current_app, request, make_response
 from flask_restful import Api
+from flask_cors import CORS
 
 import settings
 from instance.models import User
@@ -48,7 +49,7 @@ errors = {
 
 app = Flask(__name__)
 api = MyApi(app, catch_all_404s=True, errors=errors)
-
+CORS(app, supports_credentials=True)
 
 @app.before_request
 def before_request():
