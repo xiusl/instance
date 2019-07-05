@@ -13,6 +13,8 @@ api.add_resource(StatusLikesRes, '/statuses/<id>/likes')
 api.add_resource(UserStatusLikesRes, '/users/<id>/likes/statuses')
 ```
 
+#### auth
+
 - auth
 
 | path | method | params | other |
@@ -24,6 +26,9 @@ api.add_resource(UserStatusLikesRes, '/users/<id>/likes/statuses')
 | path | method | params | other |
 | --- | --- | --- | --- |
 |/verifycodes|get|phone|null|
+
+
+#### user
 
 - get one user
 
@@ -57,6 +62,8 @@ api.add_resource(UserStatusLikesRes, '/users/<id>/likes/statuses')
 | --- | --- | --- | --- |
 |/users/<id\>/followeds|get|null|need login|
 
+
+#### status
 
 - get statuses
 
@@ -94,6 +101,8 @@ api.add_resource(UserStatusLikesRes, '/users/<id>/likes/statuses')
 | --- | --- | --- | --- |
 |/users/<user_id\>/statuses|get|count,page,cursor,direction|null|
 
+
+#### status action
 
 - like status
 
