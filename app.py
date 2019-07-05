@@ -16,6 +16,7 @@ from instance.resource import (
     UserRes,
     VerifyCodes, 
     UserFollowers,
+    UserFolloweds,
     UserStatusesRes,
     StatusLikesRes,
     UserStatusLikesRes,
@@ -70,6 +71,7 @@ api.add_resource(UsersRes, '/users')
 api.add_resource(UserRes, '/users/<id>')
 api.add_resource(VerifyCodes, '/verifycodes')
 api.add_resource(UserFollowers, '/users/<id>/followers')
+api.add_resource(UserFolloweds, '/users/<id>/followeds')
 api.add_resource(StatusesRes, '/statuses')
 api.add_resource(StatusRes, '/statuses/<id>')
 api.add_resource(UserStatusesRes, '/users/<user_id>/statuses')

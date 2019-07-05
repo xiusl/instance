@@ -28,12 +28,10 @@ class UserRes(Resource):
 
 class UsersRes(Resource):
 
-    @login_required
     def get(self):
-        print("000000000")
-        print(self)
-        return {'name': 'Tom'}
-
+        us = User.objects().limit(10)
+        return [u.pack(user_id=g.user_id) for u in us]
+    
 
     def post(self):
         args = parser.parse_args()
@@ -55,6 +53,19 @@ class UsersRes(Resource):
         return user.pack(with_token=True)
 
 
+
+class UserFolloweds(Resource):
+
+    @login_required
+    def get(self, id):
+        if not id:
+            raise MissingRequiredParameter(['id'])
+        user = User.objects(id=ObjectId(id)).first()
+        if not user:
+            raise ResourceDoesNotExist()
+        rels = UserRelation.objects(follower_id=user.id).skip(0).limit(10)
+        us = [rel.followed_id for rel in rels]
+        return list([User.objects(id=uid).first().pack(user_id=g.user_id) for uid in us])
 
 
 class UserFollowers(Resource):

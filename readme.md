@@ -56,7 +56,7 @@ api.add_resource(UserStatusLikesRes, '/users/<id>/likes/statuses')
 | --- | --- | --- | --- |
 |/users/<id\>/followers|get|null|need login|
 
-- ~~get followeds~~
+- get followeds
 
 | path | method | params | other |
 | --- | --- | --- | --- |
