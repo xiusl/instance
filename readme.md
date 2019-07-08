@@ -37,6 +37,13 @@ api.add_resource(UserStatusLikesRes, '/users/<id>/likes/statuses')
 |/users/<id\>|get|null|null|
 
 
+- edit user
+
+| path | method | params | other |
+| --- | --- | --- | --- |
+|/users/<id\>|post|name,desc,avatar,password,old\_password|need login, change password need old password|
+
+
 - follow user
 
 | path | method | params | other |

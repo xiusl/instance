@@ -20,6 +20,7 @@ from instance.resource import (
     UserStatusesRes,
     StatusLikesRes,
     UserStatusLikesRes,
+    UserPasswordRes
 )
 from instance.errors import ApiBaseError, ResourceDoesNotExist, MissingRequiredParameter
 
@@ -69,6 +70,7 @@ def handle_api_error(error):
 api.add_resource(Authorizations, '/authorizations')
 api.add_resource(UsersRes, '/users')
 api.add_resource(UserRes, '/users/<id>')
+api.add_resource(UserPasswordRes, '/users/<id>/password')
 api.add_resource(VerifyCodes, '/verifycodes')
 api.add_resource(UserFollowers, '/users/<id>/followers')
 api.add_resource(UserFolloweds, '/users/<id>/followeds')
