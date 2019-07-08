@@ -5,7 +5,7 @@ import datetime
 from bson import ObjectId
 from flask import g
 from flask_restful import reqparse, Resource
-from instance.errors import BadRequestError, ResourceDoesNotExist, MissingRequiredParameter
+from instance.errors import BadRequestError, OperationForbiddenError, ResourceDoesNotExist, MissingRequiredParameter
 from instance.utils import send_sms_code, login_required
 from instance.models import User, UserRelation, UserAction, Status, VerifyCode
 
@@ -37,13 +37,12 @@ class UserRes(Resource):
         if not user:
             raise ResourceDoesNotExist()
         if str(user.id) != str(g.user_id):
-            raise ResourceDoesNotExist()
+            raise OperationForbiddenError()
         args = parser.parse_args()
         avatar = args.get('avatar')
         if avatar:
             user.avatar = avatar
         name = args.get('name')
-        print(args)
         if name:
             user.name = name
         desc = args.get('desc')
