@@ -1,6 +1,6 @@
-flask
-flask-restful
-flask-cors
-mongoengine
-twilio
-qcloudsms_py
+Flask==1.1.1
+Flask-restful==0.3.7
+Flask-cors==3.0.8
+mongoengine==0.18.2
+twilio==6.29.3
+qcloudsms_py==0.1.3
