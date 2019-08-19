@@ -166,9 +166,9 @@ class Authorizations(Resource):
             user = User.objects(phone=phone).first()
             if not user:
                 raise ResourceDoesNotExist()
-            if not user.check_passwd(password):
+            if not user.check_password(password):
                 raise ResourceDoesNotExist()
-            return user.pack(with_tokne=True)
+            return user.pack(with_token=True)
 
         if not phone or not code:
             raise MissingRequiredParameter(['phone', 'code'])

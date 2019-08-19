@@ -59,7 +59,7 @@ class User(Document):
             self.name = 'user%s' % self.phone[-4:]
         return super(User, self).save(*args, **kwargs)
 
-    def check_password(self, passowrd):
+    def check_password(self, password):
         return check_password_hash(self.password, password)
 
     def get_token(self, timestamp=None, expired_at=None):
