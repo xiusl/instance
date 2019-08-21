@@ -27,6 +27,7 @@ class Article(Document):
     content = StringField()
     author = StringField()
     author_idf = StringField()
+    published_at = StringField()
     created_at = DateTimeField(default=datetime.datetime.now)
     source = StringField()
     images = ListField()
@@ -41,6 +42,7 @@ class Article(Document):
             'original_url': self.original_url,
             'original_id': self.original_id,
             'author': self.author,
+            'published_at': self.published_at,
             'created_at': self.created_at,
             'source': self.source,
             'type': self.type,

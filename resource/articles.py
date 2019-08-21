@@ -8,11 +8,22 @@ from instance.models import Article
 from instance.errors import BadRequestError, ResourceDoesNotExist
 
 parser = reqparse.RequestParser()
-_args = ['url']
+_args = ['url', 'page', 'count']
 for _arg in _args:
     parser.add_argument(_arg)
 
-class ArticleRes(Resource):
+class ArticlesRes(Resource):
+
+    def get(self):
+        args = parser.parse_args()
+        page = int(args.get('page')) or 1
+        count = int(args.get('count')) or 10
+        skip = (page - 1)*count
+        arts = Article.objects().skip(skip).limit(count)
+        total = Article.objects().count()
+        return {"count":total, "articles":list([art.pack() for art in arts])}
+
+class ArticleSpiderRes(Resource):
 
     def post(self):
         args = parser.parse_args()
