@@ -22,10 +22,11 @@ class Article(Document):
 
     id = ObjectIdField(primary_key=True, default=ObjectId)
     title = StringField()
-    original_url = StringField(unique=True)
+    original_url = StringField()
     original_id = StringField()
     content = StringField()
     author = StringField()
+    author_idf = StringField()
     created_at = DateTimeField(default=datetime.datetime.now)
     source = StringField()
     images = ListField()
@@ -38,12 +39,13 @@ class Article(Document):
             'title': self.title,
             'content': self.content,
             'original_url': self.original_url,
-            'orginal_id': self.orginal_id,
+            'original_id': self.original_id,
             'author': self.author,
             'created_at': self.created_at,
             'source': self.source,
             'type': self.type,
             'status': self.status,
+            'author_idf': self.author_idf,
             'images': self.images
         }
         return art_dict
