@@ -8,7 +8,7 @@ from instance.models import Article
 from instance.errors import BadRequestError, ResourceDoesNotExist
 
 parser = reqparse.RequestParser()
-_args = ['url', 'page', 'count']
+_args = ['url', 'page', 'count', 'type']
 for _arg in _args:
     parser.add_argument(_arg)
 
@@ -28,12 +28,11 @@ class ArticleSpiderRes(Resource):
     def post(self):
         args = parser.parse_args()
         url = args.get('url')
+        type = args.get('type')
         session = requests.session()
         headers = {'Content-Type':'application/json'}
         data = {'url': url}
-        print(data)
-        res = session.post('http://127.0.0.1:5001/weibo', json=data, headers=headers, verify=False)
-        print(res.text)
+        res = session.post('http://127.0.0.1:5001/'+type, json=data, headers=headers, verify=False)
         return {'ok':1}
 
 
