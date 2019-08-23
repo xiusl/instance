@@ -22,7 +22,8 @@ from instance.resource import (
     UserStatusLikesRes,
     UserPasswordRes,
     ArticleSpiderRes,
-    ArticlesRes
+    ArticlesRes,
+    ArticleRes
 )
 from instance.errors import ApiBaseError, ResourceDoesNotExist, MissingRequiredParameter
 
@@ -83,6 +84,7 @@ api.add_resource(StatusLikesRes, '/statuses/<id>/likes')
 api.add_resource(UserStatusLikesRes, '/users/<id>/likes/statuses')
 api.add_resource(ArticleSpiderRes, '/articles/spider')
 api.add_resource(ArticlesRes, '/articles')
+api.add_resource(ArticleRes, '/articles/<id>')
 
 if __name__ == '__main__':
     app.run()

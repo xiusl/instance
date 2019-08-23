@@ -8,9 +8,25 @@ from instance.models import Article
 from instance.errors import BadRequestError, ResourceDoesNotExist
 
 parser = reqparse.RequestParser()
-_args = ['url', 'page', 'count', 'type']
+_args = ['id', 'url', 'page', 'count', 'type']
 for _arg in _args:
     parser.add_argument(_arg)
+
+class ArticleRes(Resource):
+
+    def get(self, id):
+        art = Article.objects(id=ObjectId(id)).first()
+        if not art:
+            raise ResourceDoesNotExist
+        return art.pack()
+
+    def delete(self, id):
+        art = Article.objects(id=ObjectId(id)).first()
+        if not art:
+            raise ResourceDoesNotExist
+        art.status = -2
+        art.save()
+        return art.pack()
 
 class ArticlesRes(Resource):
 
@@ -19,8 +35,9 @@ class ArticlesRes(Resource):
         page = int(args.get('page')) or 1
         count = int(args.get('count')) or 10
         skip = (page - 1)*count
-        arts = Article.objects().skip(skip).limit(count)
-        total = Article.objects().count()
+        qs = Article.objects().filter(status__ne=-2)
+        arts = qs.skip(skip).limit(count)
+        total = qs.count()
         return {"count":total, "articles":list([art.pack() for art in arts])}
 
 class ArticleSpiderRes(Resource):
