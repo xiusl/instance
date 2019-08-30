@@ -4,11 +4,17 @@
 import requests
 from flask import g
 from flask_restful import reqparse, Resource
-from instance.models import Article
-from instance.errors import BadRequestError, ResourceDoesNotExist
+from instance.models import Article, Source
+from instance.errors import (
+    BadRequestError, 
+    ResourceDoesNotExist,
+    MissingRequiredParameter
+)
 
 parser = reqparse.RequestParser()
-_args = ['id', 'url', 'page', 'count', 'type']
+_args = ['id', 'url', 'page', 'count', 'type',
+         'name', 'identifier', 'avatar',
+         'level', 'status']
 for _arg in _args:
     parser.add_argument(_arg)
 
@@ -61,3 +67,24 @@ class ArticleSpiderRes(Resource):
             raise ResourceDoesNotExist()
 
         return art.pack()
+
+class SourcesRes(Resource):
+
+    def get(self):
+        pass
+
+    def post(self):
+        args = parser.parse_args()
+        name = args.get('name')
+        ident = args.get('identifier')
+        spider_url = args.get('url')
+        if not name or not ident or not spider_url:
+            raise MissingRequiredParameter(['name', '...']) 
+        avatar = args.get('avatar')
+        type = args.get('type')
+        s = Source(name=name, ident=ident, spider_url=spider_url)
+        s.avatar = avatar
+        s.type = type
+        s.save()
+        return s.pack()
+         
