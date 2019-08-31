@@ -26,3 +26,7 @@ SMS_TOKEN = os.getenv('SMS_TOKEN') or ''
 SMS_TENC_ID = os.getenv('SMS_TENC_ID') or ''
 SMS_TENC_KEY = os.getenv('SMS_TENC_KEY') or ''
 
+
+COS_SECRET_ID = os.getenv("COS_SECRET_ID") or "123"
+COS_SECRET_KEY = os.getenv("COS_SECRET_KEY") or "456"
+

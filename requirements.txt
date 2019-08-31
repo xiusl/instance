@@ -4,5 +4,6 @@ Flask-cors==3.0.8
 mongoengine==0.18.2
 twilio==6.29.3
 qcloudsms_py==0.1.3
+cos-python-sdk-v5==1.6.5
 
 requests
