@@ -25,9 +25,10 @@ class Article(Document):
     original_url = StringField()
     original_id = StringField()
     content = StringField()
+    transcoding = StringField()
     author = StringField()
     author_idf = StringField()
-    published_at = StringField()
+    published_at = DateTimeField(default=datetime.datetime.now)
     created_at = DateTimeField(default=datetime.datetime.now)
     source = StringField()
     images = ListField()
@@ -39,6 +40,7 @@ class Article(Document):
             'id': str(self.id),
             'title': self.title,
             'content': self.content,
+            'transcoding': self.transcoding,
             'original_url': self.original_url,
             'original_id': self.original_id,
             'author': self.author,

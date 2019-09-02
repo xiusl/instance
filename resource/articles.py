@@ -4,6 +4,7 @@
 import requests
 from flask import g
 from flask_restful import reqparse, Resource
+from bson import ObjectId
 from instance.models import Article, Source
 from instance.errors import (
     BadRequestError, 
