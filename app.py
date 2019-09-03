@@ -4,7 +4,7 @@
 from flask import Flask, g, current_app, request
 from flask_restful import Api
 
-#import settings
+import settings
 from instance.models import User
 from instance.utils import output_json
 from instance.resource import (
