@@ -16,7 +16,7 @@ MONGO_URL = os.getenv('MONGO_URL') or 'mongodb://127.0.0.1:27017/instance_db'
 print(MONGO_URL)
 
 from mongoengine import connect
-connect(alias=MONGO_DB, host=MONGO_URL)
+connect(alias=MONGO_DB, host=MONGO_URL,connect=False)
 
 
 
