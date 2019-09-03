@@ -25,7 +25,8 @@ from instance.resource import (
     ArticlesRes,
     ArticleRes,
     SourcesRes,
-    SettingsRes
+    SettingsRes,
+    SettingWxRes
 )
 from instance.errors import ApiBaseError, ResourceDoesNotExist, MissingRequiredParameter
 
@@ -89,7 +90,7 @@ api.add_resource(ArticlesRes, '/articles')
 api.add_resource(ArticleRes, '/articles/<id>')
 api.add_resource(SourcesRes, '/sources')
 api.add_resource(SettingsRes, '/settings')
-
+api.add_resource(SettingWxRes, '/setting/wx')
 
 if __name__ == '__main__':
     app.run()

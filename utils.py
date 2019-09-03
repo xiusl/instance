@@ -30,6 +30,15 @@ def output_json(data, code, headers=None, error=None, extra=None):
     if msg:
         error = msg
         data = None
+    
+    try:
+        txt = data.get('txt')
+    except:
+        txt = None
+
+    if txt:
+        resp = make_response(jsonify(txt), code)
+        return resp
 
     resp_data = {
         'data': data,
