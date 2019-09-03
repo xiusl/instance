@@ -5,7 +5,7 @@ from flask import Flask, g, current_app, request, make_response
 from flask_restful import Api
 from flask_cors import CORS
 
-#import settings
+import settings
 from instance.models import User
 from instance.utils import output_json, cos_client
 from instance.resource import (
@@ -90,19 +90,6 @@ api.add_resource(ArticleRes, '/articles/<id>')
 api.add_resource(SourcesRes, '/sources')
 api.add_resource(SettingsRes, '/settings')
 
-@app.route('/upload_token')
-def upload():
-    mime_type = '123'
-    response = cos_client.get_auth(
-        Method = 'POST',
-        Bucket = 'shilin-1255431184',
-        Headers = {
-            "Content-Type": mime_type,
-        },
-        Key = '/',
-        Expired = 3600
-    )
-    return output_json(response, 200)
 
 if __name__ == '__main__':
     app.run()
