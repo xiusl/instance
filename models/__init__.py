@@ -3,3 +3,4 @@
 
 from .user import *
 from .status import *
+from .article import *

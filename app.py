@@ -1,12 +1,13 @@
 # coding=utf-8
 # author:xsl
 
-from flask import Flask, g, current_app, request
+from flask import Flask, g, current_app, request, make_response
 from flask_restful import Api
+from flask_cors import CORS
 
 import settings
 from instance.models import User
-from instance.utils import output_json
+from instance.utils import output_json, cos_client
 from instance.resource import (
     StatusesRes, 
     StatusRes, 
@@ -15,9 +16,16 @@ from instance.resource import (
     UserRes,
     VerifyCodes, 
     UserFollowers,
+    UserFolloweds,
     UserStatusesRes,
     StatusLikesRes,
     UserStatusLikesRes,
+    UserPasswordRes,
+    ArticleSpiderRes,
+    ArticlesRes,
+    ArticleRes,
+    SourcesRes,
+    SettingsRes
 )
 from instance.errors import ApiBaseError, ResourceDoesNotExist, MissingRequiredParameter
 
@@ -48,7 +56,7 @@ errors = {
 
 app = Flask(__name__)
 api = MyApi(app, catch_all_404s=True, errors=errors)
-
+CORS(app, supports_credentials=True)
 
 @app.before_request
 def before_request():
@@ -67,15 +75,34 @@ def handle_api_error(error):
 api.add_resource(Authorizations, '/authorizations')
 api.add_resource(UsersRes, '/users')
 api.add_resource(UserRes, '/users/<id>')
+api.add_resource(UserPasswordRes, '/users/<id>/password')
 api.add_resource(VerifyCodes, '/verifycodes')
 api.add_resource(UserFollowers, '/users/<id>/followers')
+api.add_resource(UserFolloweds, '/users/<id>/followeds')
 api.add_resource(StatusesRes, '/statuses')
 api.add_resource(StatusRes, '/statuses/<id>')
 api.add_resource(UserStatusesRes, '/users/<user_id>/statuses')
 api.add_resource(StatusLikesRes, '/statuses/<id>/likes')
 api.add_resource(UserStatusLikesRes, '/users/<id>/likes/statuses')
+api.add_resource(ArticleSpiderRes, '/articles/spider')
+api.add_resource(ArticlesRes, '/articles')
+api.add_resource(ArticleRes, '/articles/<id>')
+api.add_resource(SourcesRes, '/sources')
+api.add_resource(SettingsRes, '/settings')
 
-
+@app.route('/upload_token')
+def upload():
+    mime_type = '123'
+    response = cos_client.get_auth(
+        Method = 'POST',
+        Bucket = 'shilin-1255431184',
+        Headers = {
+            "Content-Type": mime_type,
+        },
+        Key = '/',
+        Expired = 3600
+    )
+    return output_json(response, 200)
 
 if __name__ == '__main__':
     app.run()

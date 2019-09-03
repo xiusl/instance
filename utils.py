@@ -69,7 +69,7 @@ def send_sms_v2(to, content):
                 ext='')
     except Exception as e:
         return False
-    code = int(result.get('result'))
+    code = int(result.get('result', -1))
     if code != 0:
         return False
     return True
@@ -77,3 +77,11 @@ def send_sms_v2(to, content):
 def send_sms_code(to, code):
     content = '验证码%s，如非本人操作请忽略。' % code
     return send_sms_v2(to, content)
+
+
+from qcloud_cos import CosConfig, CosS3Client
+cos_config = CosConfig(Region='ap-beijing', 
+        SecretId=settings.COS_SECRET_ID, 
+        SecretKey=settings.COS_SECRET_KEY, Token=None)
+cos_client = CosS3Client(cos_config)
+
