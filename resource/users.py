@@ -6,12 +6,14 @@ from bson import ObjectId
 from flask import g
 from flask_restful import reqparse, Resource
 from instance.errors import BadRequestError, OperationForbiddenError, ResourceDoesNotExist, MissingRequiredParameter
-from instance.utils import send_sms_code, login_required
+from instance.utils import send_sms_code, send_email_code, login_required
 from instance.models import User, UserRelation, UserAction, Status, VerifyCode
 
 parser = reqparse.RequestParser()
 
-_args = ['name', 'phone', 'code', 'password', 'id', 'avatar', 'old_password', 'desc', 'email']
+_args = ['name', 'phone', 'code', 'password', 
+        'id', 'avatar', 'old_password', 'desc', 
+        'email', 'key']
 for _arg in _args:
     parser.add_argument(_arg)
 
@@ -39,6 +41,19 @@ class UserRes(Resource):
         if str(user.id) != str(g.user_id):
             raise OperationForbiddenError()
         args = parser.parse_args()
+        email = args.get('email')
+        if email:
+            vc = VerifyCode.get(email)
+            code = args.get('code')
+            if not code:
+                raise MissingRequiredParameter(['code'])
+            if int(vc.code) != int(code):
+                raise BadRequestError('VerifyCode Error')
+            if vc.expired_at < datetime.datetime.now():
+                raise BadRequestError('VerifyCode Expired')
+            user.email = email
+            user.save()
+            return user.pack()
         avatar = args.get('avatar')
         if avatar:
             user.avatar = avatar
@@ -185,25 +200,37 @@ class Authorizations(Resource):
             user.save()
         return user.pack(with_token=True)
 
-    # reset 17600101706 password
+    @login_required
     def get(self):
-        u = User.objects(phone="17600101706").first()
-        u.password = 'Asd110#.'
-        u.save()
+        user_id = g.user_id 
+        u = User.objects(id=ObjectId(user_id)).first()
+        if not u:
+            raise ResourceDoesNotExist()
         return u.pack()
 
 class VerifyCodes(Resource):
 
     def get(self):
         args = parser.parse_args()
-        phone = args.get('phone')
-        if not phone:
-            raise MissingRequiredParameter(['phone'])
-        vc = VerifyCode.create(phone)
-        ok = send_sms_code(phone, vc.code)
-        if not ok:
-#            vc.delete()
-            raise BadRequestError('Send Code Failure.')
+        key = args.get('key')
+        vc = VerifyCode.get(key)
+        now = datetime.datetime.now()
+        if vc and (now - vc.created_at).total_seconds() < 300:
+            raise BadRequestError('Send Code Too Frequently.')
+        if not key:
+            raise MissingRequiredParameter(['phone or email'])
+        vc = VerifyCode.create(key)
+        if '@' not in key: # is phone
+            ok = send_sms_code(key, vc.code)
+            if not ok:
+                vc.delete()
+                raise BadRequestError('Send Code Failure.')
+        else:
+            ok = send_email_code(key, vc.code)
+            if not ok:
+                vc.delete()
+                raise BadRequestError('Send Code Failure.')
+            
         return {'ok': 1}
 
 
