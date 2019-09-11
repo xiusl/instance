@@ -42,7 +42,7 @@ class ArticlesRes(Resource):
         page = int(args.get('page')) or 1
         count = int(args.get('count')) or 10
         skip = (page - 1)*count
-        qs = Article.objects().filter(status__ne=-2)
+        qs = Article.objects().filter(status__ne=-2).order_by("-created_at")
         arts = qs.skip(skip).limit(count)
         total = qs.count()
         return {"count":total, "articles":list([art.pack() for art in arts])}

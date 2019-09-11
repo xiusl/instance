@@ -93,7 +93,7 @@ api.add_resource(SettingsRes, '/settings')
 api.add_resource(SettingWxRes, '/setting/wx')
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
 
 
 
