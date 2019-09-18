@@ -67,7 +67,7 @@ def before_request():
     if token:
         u = User.get_by_token(token)
         g.user = u
-        g.user_id = u.id
+        g.user_id = u.id if u else None
 
 @app.errorhandler(ApiBaseError)
 def handle_api_error(error):

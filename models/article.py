@@ -35,24 +35,24 @@ class Article(Document):
     type = StringField()
     status = IntField(default=0)
 
-    def pack(self):
-        art_dict = {
-            'id': str(self.id),
-            'title': self.title,
-            'content': self.content,
-            'transcoding': self.transcoding,
-            'original_url': self.original_url,
-            'original_id': self.original_id,
-            'author': self.author,
-            'published_at': self.published_at,
-            'created_at': self.created_at,
-            'source': self.source,
-            'type': self.type,
-            'status': self.status,
-            'author_idf': self.author_idf,
-            'images': self.images
-        }
-        return art_dict
+    def pack(self, trans=False):
+        data = {}
+        data['id'] = str(self.id)
+        data['title'] = self.title
+        if trans:
+            data['content'] = self.content
+            data['transcoding'] = self.transcoding
+        data['original_url'] = self.original_url
+        data['original_id'] = self.original_id
+        data['author'] = self.author
+        data['published_at'] = self.published_at
+        data['created_at'] = self.created_at
+        data['source'] = self.source
+        data['type'] = self.type
+        data['status'] = self.status
+        data['author_idf'] = self.author_idf
+        data['images'] = self.images
+        return data 
 
 
 class Source(Document):
