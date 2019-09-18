@@ -5,7 +5,13 @@ import datetime
 from bson import ObjectId
 from flask import g
 from flask_restful import reqparse, Resource
-from instance.errors import BadRequestError, OperationForbiddenError, ResourceDoesNotExist, MissingRequiredParameter
+from instance.errors import (
+    BadRequestError, 
+    OperationForbiddenError, 
+    ResourceDoesNotExist, 
+    MissingRequiredParameter,
+    TipMessageError
+)
 from instance.utils import send_sms_code, send_email_code, login_required
 from instance.models import User, UserRelation, UserAction, Status, VerifyCode
 
@@ -13,7 +19,7 @@ parser = reqparse.RequestParser()
 
 _args = ['name', 'phone', 'code', 'password', 
         'id', 'avatar', 'old_password', 'desc', 
-        'email', 'key']
+        'email', 'key', 'invitecode']
 for _arg in _args:
     parser.add_argument(_arg)
 
@@ -212,6 +218,9 @@ class VerifyCodes(Resource):
 
     def get(self):
         args = parser.parse_args()
+        invitecode = args.get('invitecode')
+        if invitecode != "inskkcode":
+            raise TipMessageError('Contact xiushilin@hotmail.com')
         key = args.get('key')
         vc = VerifyCode.get(key)
         now = datetime.datetime.now()

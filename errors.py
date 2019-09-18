@@ -19,6 +19,13 @@ class LoginRequiredError(ApiBaseError):
     code = 401
     message = 'Please login'
 
+class TipMessageError(ApiBaseError):
+    code = 400
+    message = "Tip: "
+    def __init__(self, tip):
+        self.tip = tip
+        self.message = self.message + tip
+
 class OperationForbiddenError(ApiBaseError):
     code = 403
     message = 'Operation forbidden'
