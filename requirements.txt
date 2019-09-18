@@ -7,3 +7,4 @@ qcloudsms_py
 cos-python-sdk-v5
 
 requests
+pycrypto
