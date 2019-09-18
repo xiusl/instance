@@ -25,7 +25,7 @@ class ArticleRes(Resource):
         art = Article.objects(id=ObjectId(id)).first()
         if not art:
             raise ResourceDoesNotExist
-        return art.pack()
+        return art.pack(trans=True)
 
     def delete(self, id):
         art = Article.objects(id=ObjectId(id)).first()
@@ -39,13 +39,13 @@ class ArticlesRes(Resource):
 
     def get(self):
         args = parser.parse_args()
-        page = int(args.get('page')) or 1
-        count = int(args.get('count')) or 10
+        page = int(args.get('page') or 1)
+        count = int(args.get('count') or 10)
         skip = (page - 1)*count
-        qs = Article.objects().filter(status__ne=-2)
-        arts = qs.skip(skip).limit(count)
+        qs = Article.objects().filter(status__ne=-2).order_by("-created_at")
+        arts = list(qs.skip(skip).limit(count))
         total = qs.count()
-        return {"count":total, "articles":list([art.pack() for art in arts])}
+        return {"count":total, "articles":[art.pack() for art in arts]}
 
 class ArticleSpiderRes(Resource):
 
