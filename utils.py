@@ -8,6 +8,8 @@ from instance import settings
 from instance.errors import LoginRequiredError
 from twilio.rest import Client
 from qcloudsms_py import SmsSingleSender
+from email.mime.text import MIMEText
+import smtplib
 
 
 def login_required(func):
@@ -87,6 +89,27 @@ def send_sms_code(to, code):
     content = '验证码%s，如非本人操作请忽略。' % code
     return send_sms_v2(to, content)
 
+
+def send_email(to, subject, content):
+    msg = MIMEText(content.encode('utf8'), 'html', 'utf8')
+    msg['From'] = settings.EMAIL_ADMIN
+    msg['To'] = to
+    msg['Subject'] = subject
+    try:
+        smtp = smtplib.SMTP_SSL(settings.EMAIL_SMTP, settings.EMAIL_SMTP_PORT)
+        smtp.ehlo()
+        smtp.login(settings.EMAIL_ADMIN, settings.EMAIL_ADMIN_PWD)
+        smtp.sendmail(settings.EMAIL_ADMIN, to, msg.as_string())
+        smtp.close()
+    except Exception as e:
+        print(e)
+        return False
+    return True
+
+def send_email_code(to, code):
+    subject = '[Instance]验证码为%s' % code
+    content = '<h5>验证码:%s  (10分钟内有效)</h5>' % code
+    return send_email(to, subject, content)
 
 from qcloud_cos import CosConfig, CosS3Client
 cos_config = CosConfig(Region='ap-beijing', 

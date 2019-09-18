@@ -67,7 +67,7 @@ def before_request():
     if token:
         u = User.get_by_token(token)
         g.user = u
-        g.user_id = u.id
+        g.user_id = u.id if u else None
 
 @app.errorhandler(ApiBaseError)
 def handle_api_error(error):
@@ -93,7 +93,7 @@ api.add_resource(SettingsRes, '/settings')
 api.add_resource(SettingWxRes, '/setting/wx')
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
 
 
 
