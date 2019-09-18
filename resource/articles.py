@@ -39,8 +39,8 @@ class ArticlesRes(Resource):
 
     def get(self):
         args = parser.parse_args()
-        page = int(args.get('page')) or 1
-        count = int(args.get('count')) or 10
+        page = int(args.get('page') or 1)
+        count = int(args.get('count') or 10)
         skip = (page - 1)*count
         qs = Article.objects().filter(status__ne=-2).order_by("-created_at")
         arts = list(qs.skip(skip).limit(count))
