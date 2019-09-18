@@ -37,7 +37,7 @@ def output_json(data, code, headers=None, error=None, extra=None):
         txt = None
 
     if txt:
-        resp = make_response(jsonify(txt), code)
+        resp = make_response(txt, code)
         return resp
 
     resp_data = {
