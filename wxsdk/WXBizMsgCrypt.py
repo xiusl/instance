@@ -141,7 +141,7 @@ class Prpcrypt(object):
         @return: 加密得到的字符串
         """
         # 16位随机字符串添加到明文开头
-        text = self.get_random_str() + str(struct.pack("I",socket.htonl(len(text)))) + text + appid
+        text = self.get_random_str() + struct.pack("I",socket.htonl(len(text))).decode('utf8') + text + appid
         # 使用自定义的填充方式对明文进行补位填充
         pkcs7 = PKCS7Encoder()
         text = pkcs7.encode(text)
@@ -168,17 +168,13 @@ class Prpcrypt(object):
             print(e)
             return  ierror.WXBizMsgCrypt_DecryptAES_Error,None
         try:
-            print(type(plain_text))
             plain_text = plain_text.decode('utf8')
-            print(plain_text)
             pad = ord(plain_text[-1])
-            print(pad)
             # 去掉补位字符串
             #pkcs7 = PKCS7Encoder()
             #plain_text = pkcs7.encode(plain_text)
             # 去除16位随机字符串
             content = plain_text[16:-pad]
-            print(content)
             xml_len = socket.ntohl(struct.unpack("I",content[:4].encode('utf8'))[0])
             xml_content = content[4 : xml_len+4]
             from_appid = content[xml_len+4:]
