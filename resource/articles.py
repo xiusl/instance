@@ -57,11 +57,8 @@ class ArticleSpiderRes(Resource):
         session = requests.session()
         headers = {'Content-Type':'application/json'}
         data = {'url': url}
-        if DEBUG:
-        #res = session.post('http://149.129.97.184/'+type, json=data, headers=headers, verify=False)
-            res = session.post('http://127.0.0.1:5001/'+type, json=data, headers=headers, verify=False)
-        else:
-            res = session.post('http://149.129.97.184/'+type, json=data, headers=headers, verify=False)
+        res = session.post('http://149.129.97.184/'+type, json=data, headers=headers, verify=False)
+        #res = session.post('http://127.0.0.1:5001/'+type, json=data, headers=headers, verify=False)
         return {'ok':1}
 
 
