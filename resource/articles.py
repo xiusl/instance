@@ -6,16 +6,18 @@ from flask import g
 from flask_restful import reqparse, Resource
 from bson import ObjectId
 from instance.models import Article, Source
+from instance.utils import login_required
 from instance.errors import (
     BadRequestError, 
     ResourceDoesNotExist,
+    TipMessageError,
     MissingRequiredParameter
 )
 
 parser = reqparse.RequestParser()
 _args = ['id', 'url', 'page', 'count', 'type',
          'name', 'identifier', 'avatar',
-         'level', 'status']
+         'level', 'status', 'trans_text']
 for _arg in _args:
     parser.add_argument(_arg)
 
@@ -27,6 +29,7 @@ class ArticleRes(Resource):
             raise ResourceDoesNotExist
         return art.pack(trans=True)
 
+    @login_required
     def delete(self, id):
         art = Article.objects(id=ObjectId(id)).first()
         if not art:
@@ -34,6 +37,20 @@ class ArticleRes(Resource):
         art.status = -2
         art.save()
         return art.pack()
+
+    @login_required
+    def patch(self, id):
+        art = Article.objects(id=ObjectId(id)).first()
+        if not art:
+            raise ResourceDoesNotExist
+        args = parser.parse_args()
+        trans_text = args.get('trans_text') or ''
+        if len(trans_text) <= 0:
+            raise TipMessageError('content len == 0')
+        art.transcoding = trans_text
+        art.save()
+        return art.pack()
+
 
 class ArticlesRes(Resource):
 
@@ -47,6 +64,7 @@ class ArticlesRes(Resource):
         total = qs.count()
         return {"count":total, "articles":[art.pack() for art in arts]}
 
+
 class ArticleSpiderRes(Resource):
 
     def post(self):
@@ -57,7 +75,7 @@ class ArticleSpiderRes(Resource):
         headers = {'Content-Type':'application/json'}
         data = {'url': url}
         res = session.post('http://149.129.97.184/'+type, json=data, headers=headers, verify=False)
-       # res = session.post('http://127.0.0.1:5001/'+type, json=data, headers=headers, verify=False)
+        #res = session.post('http://127.0.0.1:5001/'+type, json=data, headers=headers, verify=False)
         return {'ok':1}
 
 

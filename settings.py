@@ -35,3 +35,4 @@ EMAIL_SMTP = 'smtp.exmail.qq.com'
 EMAIL_SMTP_PORT = '465'
 EMAIL_ADMIN = 'help@xiusl.com'
 EMAIL_ADMIN_PWD = 'He110120.'
+
