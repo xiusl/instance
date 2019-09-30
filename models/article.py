@@ -52,6 +52,7 @@ class Article(Document):
         data['status'] = self.status
         data['author_idf'] = self.author_idf
         data['images'] = self.images
+        data['url'] = 'https://ins.sleen.top/articles/'+str(self.id)
         return data 
 
 
