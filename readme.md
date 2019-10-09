@@ -21,6 +21,10 @@ api.add_resource(SettingsRes, '/settings')
 api.add_resource(SettingWxRes, '/setting/wx')
 ```
 
+[auth](#auth)
+
+[status](#status)
+
 #### auth
 
 - auth
