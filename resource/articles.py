@@ -74,6 +74,19 @@ class ArticleSpiderRes(Resource):
         session = requests.session()
         headers = {'Content-Type':'application/json'}
         data = {'url': url}
+
+        if type == None:
+            if '36kr' in url:
+                type = 'kr36'
+            elif 'weibo' in url:
+                type = 'weibo'
+            elif 'weixin' in url:
+                type = 'weixin'
+            elif 'laohu' in url:
+                type = 'laohu'
+            else
+                type  = ''
+
         res = session.post('http://149.129.97.184/'+type, json=data, headers=headers, verify=False)
         #res = session.post('http://127.0.0.1:5001/'+type, json=data, headers=headers, verify=False)
         return {'ok':1}
