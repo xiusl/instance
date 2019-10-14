@@ -84,7 +84,7 @@ class ArticleSpiderRes(Resource):
                 type = 'weixin'
             elif 'laohu' in url:
                 type = 'laohu'
-            else
+            else:
                 type  = ''
 
         res = session.post('http://149.129.97.184/'+type, json=data, headers=headers, verify=False)
