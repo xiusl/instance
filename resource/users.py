@@ -19,7 +19,8 @@ parser = reqparse.RequestParser()
 
 _args = ['name', 'phone', 'code', 'password', 
         'id', 'avatar', 'old_password', 'desc', 
-        'email', 'key', 'invitecode']
+        'email', 'key', 'invitecode',
+        'account']
 for _arg in _args:
     parser.add_argument(_arg)
 
@@ -182,11 +183,22 @@ class Authorizations(Resource):
         code = args.get('code')
         password = args.get('password')
         if password:
+            account = args.get('account')
+            if account and '@' in account:
+                user = User.objects(email=account).first()
+                if not user:
+                    raise ResourceDoesNotExist()
+                if not user.check_password(password):
+                    raise BadRequestError('Password Error')
+                return user.pack(with_token=True)
+            if account:
+                phone = account
             if not phone:
                 raise MissingRequiredParameter(['phone'])
             user = User.objects(phone=phone).first()
             if not user:
-                raise ResourceDoesNotExist()
+                raise BadRequestError('用户未注册')
+                #raise ResourceDoesNotExist()
             if not user.check_password(password):
                 raise BadRequestError('Password Error')
             return user.pack(with_token=True)

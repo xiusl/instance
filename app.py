@@ -69,6 +69,9 @@ def before_request():
         g.user = u
         g.user_id = u.id if u else None
 
+    source = request.headers.get("X-Type") or ""
+    g.source = source 
+
 @app.errorhandler(ApiBaseError)
 def handle_api_error(error):
     return output_json(error.to_dict(), error.code)
