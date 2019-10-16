@@ -74,7 +74,7 @@ class UserRes(Resource):
         flag = False
         if password:
             old_password = args.get('old_password')
-            if user.check_passwd(old_password):
+            if user.check_password(old_password):
                 user.password = password
                 flag = True
         user.save()
