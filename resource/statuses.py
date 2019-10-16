@@ -33,7 +33,7 @@ class StatusesRes(Resource):
         count = 10
         page = 1
         page -= page
-        ss = Status.objects.skip(page*count).limit(count)
+        ss = Status.objects.skip(page*count).limit(count).order_by('-created_at')
         return list([s.pack(user_id=g.user_id) for s in ss])
 
 
