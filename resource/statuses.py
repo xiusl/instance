@@ -106,7 +106,7 @@ class UserStatusesRes(Resource):
     def get(self, user_id):
         if not user_id:
             raise MissingRequiredParameter(['user_id'])
-        ss = Status.objects(user_id=user_id).skip(0).limit(10)
+        ss = Status.objects(user_id=user_id).skip(0).limit(10).order_by('-created_at')
         return [s.pack(g.user_id) for s in ss]
 
 
