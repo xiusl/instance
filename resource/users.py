@@ -20,7 +20,7 @@ parser = reqparse.RequestParser()
 _args = ['name', 'phone', 'code', 'password', 
         'id', 'avatar', 'old_password', 'desc', 
         'email', 'key', 'invitecode',
-        'account']
+        'account', 'page', 'count']
 for _arg in _args:
     parser.add_argument(_arg)
 
@@ -84,8 +84,10 @@ class UserRes(Resource):
 class UsersRes(Resource):
 
     def get(self):
-        us = User.objects().limit(10)
-        return [u.pack(user_id=g.user_id) for u in us]
+        qs = User.objects()
+        us = qs.limit(10)
+        total = qs.count()
+        return {"count":total, "users":[u.pack(user_id=g.user_id) for u in us]}
     
 
     def post(self):
