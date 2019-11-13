@@ -81,7 +81,7 @@ class ArticleSpiderRes(Resource):
             elif 'weibo' in url:
                 type = 'weibo'
             elif 'weixin' in url:
-                type = 'weixin'
+                type = 'wechat'
             elif 'laohu' in url:
                 type = 'laohu'
             elif 'jianshu' in url:
