@@ -71,6 +71,7 @@ class Source(Document):
     created_at = DateTimeField(default=datetime.datetime.now)
 
     spider_url = StringField()
+    url = StringField()
 
 
     def save(self, *args, **kwargs):
@@ -87,6 +88,8 @@ class Source(Document):
             'type': self.type,
             'level': self.level,
             'status': self.status,
+            'url': self.url,
+            'spider_url': self.spider_url,
             'created_at': self.created_at
         }
         return sour_dict

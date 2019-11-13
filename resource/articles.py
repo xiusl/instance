@@ -103,22 +103,39 @@ class ArticleSpiderRes(Resource):
 
         return art.pack()
 
-class SourcesRes(Resource):
-
+class SourceRes(Resource):
     def get(self):
         pass
 
     def post(self):
+        pass
+
+class SourcesRes(Resource):
+
+    def get(self):
+        args = parser.parse_args()
+        page = int(args.get('page') or 1)
+        count = int(args.get('count') or 10)
+        skip = (page - 1)*count
+        qs = Source.objects().filter(status__ne=-2).order_by("-created_at")
+        arts = list(qs.skip(skip).limit(count))
+        total = qs.count()
+        return {"count":total, "sources":[art.pack() for art in arts]}
+
+
+
+    def post(self):
         args = parser.parse_args()
         name = args.get('name')
-        ident = args.get('identifier')
+        url = args.get('url')
         spider_url = args.get('url')
-        if not name or not ident or not spider_url:
+        if not name or not spider_url:
             raise MissingRequiredParameter(['name', '...']) 
         avatar = args.get('avatar')
         type = args.get('type')
-        s = Source(name=name, ident=ident, spider_url=spider_url)
+        s = Source(name=name, spider_url=spider_url)
         s.avatar = avatar
+        s.url = url
         s.type = type
         s.save()
         return s.pack()
