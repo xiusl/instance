@@ -27,7 +27,8 @@ from instance.resource import (
     SourcesRes,
     SettingsRes,
     SettingWxRes,
-    SettingPingRes
+    SettingPingRes,
+    SpiderArtsRes,
 )
 from instance.errors import ApiBaseError, ResourceDoesNotExist, MissingRequiredParameter
 
@@ -96,6 +97,7 @@ api.add_resource(SourcesRes, '/sources')
 api.add_resource(SettingsRes, '/settings')
 api.add_resource(SettingWxRes, '/setting/wx')
 api.add_resource(SettingPingRes, '/setting/ping')
+api.add_resource(SpiderArtsRes, '/spiderarts')
 
 if __name__ == '__main__':
     app.run(debug=True)

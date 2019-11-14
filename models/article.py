@@ -93,3 +93,29 @@ class Source(Document):
             'created_at': self.created_at
         }
         return sour_dict
+
+class SpArtSmp(Document):
+    meta = {
+        'db_alias': 'sp_db',
+        'collection': 'tmp'
+    }
+
+    id = ObjectIdField(primary_key=True, default=ObjectId)
+    title = StringField()
+    url = StringField()
+    a_id = StringField()
+    user_id = StringField()
+    user_name = StringField()
+
+
+    def pack(self):
+        d = {
+            'id': str(self.id),
+            'a_id': self.a_id,
+            'title': self.title,
+            'url': self.url,
+            'user_id': self.user_id,
+            'user_name': self.user_name
+        }
+        return d
+

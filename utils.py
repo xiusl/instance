@@ -117,3 +117,20 @@ cos_config = CosConfig(Region='ap-beijing',
         SecretKey=settings.COS_SECRET_KEY, Token=None)
 cos_client = CosS3Client(cos_config)
 
+
+def query_paging(qs, cursor, direction, count):
+    if direction > 0 and cursor:
+        kw = {'id__gt': cursor}
+        qs = qs.filter(**kw).order_by('id').limit(count)
+        objs = list(qs)
+        objs.reverse()
+    elif direction > 0 and not cursor:
+        qs = qs.order_by('-id').limit(count)
+        objs = list(qs)
+    elif direction < 0 and cursor:
+        kw = {'id__lt': cursor}
+        qs = qs.filter(**kw).order_by('-id').limit(count)
+        objs = list(qs)
+    else:
+        objs = []
+    return objs

@@ -5,8 +5,8 @@ import requests
 from flask import g
 from flask_restful import reqparse, Resource
 from bson import ObjectId
-from instance.models import Article, Source
-from instance.utils import login_required
+from instance.models import Article, SpArtSmp, Source
+from instance.utils import login_required, query_paging 
 from instance.errors import (
     BadRequestError, 
     ResourceDoesNotExist,
@@ -17,7 +17,8 @@ from instance.errors import (
 parser = reqparse.RequestParser()
 _args = ['id', 'url', 'page', 'count', 'type',
          'name', 'identifier', 'avatar',
-         'level', 'status', 'trans_text']
+         'level', 'status', 'trans_text',
+         'cursor', 'direction']
 for _arg in _args:
     parser.add_argument(_arg)
 
@@ -56,8 +57,16 @@ class ArticlesRes(Resource):
 
     def get(self):
         args = parser.parse_args()
-        page = int(args.get('page') or 1)
+        page = args.get('page')
         count = int(args.get('count') or 10)
+        cursor = args.get('cursor')
+        if cursor and not page:
+            direction = int(args.get('direction') or 1)
+            qs = Article.objects().filter(status__ne=-2)
+            arts = query_paging(qs, cursor, direction, count)
+            total = qs.count()
+            return {"count":total, "articles":[art.pack() for art in arts]}
+        page = int(args.get('page') or 1)
         skip = (page - 1)*count
         qs = Article.objects().filter(status__ne=-2).order_by("-created_at")
         arts = list(qs.skip(skip).limit(count))
@@ -139,4 +148,18 @@ class SourcesRes(Resource):
         s.type = type
         s.save()
         return s.pack()
-         
+
+
+class SpiderArtsRes(Resource):
+
+    def get(self):
+        args = parser.parse_args()
+        page = int(args.get('page') or 1)
+        count = int(args.get('count') or 10)
+        skip = (page - 1)*count
+        qs = SpArtSmp.objects()
+        arts = list(qs.skip(skip).limit(count))
+        total = qs.count()
+        return {"count":total, "articles":[art.pack() for art in arts]}
+
+
