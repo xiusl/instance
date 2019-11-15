@@ -69,6 +69,7 @@ class ArticlesRes(Resource):
         page = args.get('page')
         count = int(args.get('count') or 10)
         cursor = args.get('cursor')
+        spider = args.get('spider')
         if cursor and not page:
             direction = int(args.get('direction') or 1)
             qs = Article.objects().filter(status__ne=-2)
@@ -77,7 +78,10 @@ class ArticlesRes(Resource):
             return {"count":total, "articles":[art.pack() for art in arts]}
         page = int(args.get('page') or 1)
         skip = (page - 1)*count
-        qs = Article.objects().filter(status__ne=-2).order_by("-created_at")
+        if spider:
+            qs = Article.objects(spider=spider).filter(status__ne=-2).order_by("-created_at")
+        else:
+            qs = Article.objects().filter(status__ne=-2).order_by("-created_at")
         arts = list(qs.skip(skip).limit(count))
         total = qs.count()
         return {"count":total, "articles":[art.pack() for art in arts]}
