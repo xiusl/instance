@@ -34,6 +34,7 @@ class Article(Document):
     images = ListField()
     type = StringField()
     status = IntField(default=0)
+    spider = IntField()
 
     def pack(self, trans=False):
         data = {}
@@ -52,7 +53,8 @@ class Article(Document):
         data['status'] = self.status
         data['author_idf'] = self.author_idf
         data['images'] = self.images
-        data['url'] = 'https://ins.sleen.top/articles/'+str(self.id)
+        data['url'] = 'https://ins.sleen.top/articles/'+str(self.id),
+        data['is_spider'] = self.spider
         return data 
 
 
