@@ -25,6 +25,8 @@ class PoemAuthor(DynamicDocument):
     idnew = StringField()
     nameStr = StringField()
     cont = StringField()
+    poems_count = IntField()
+
 
 
     def pack(self):
@@ -33,7 +35,8 @@ class PoemAuthor(DynamicDocument):
             #'o_id': self.o_id,
             #'idnew': self.idnew,
             'name': self.nameStr,
-            'desc': self.cont
+            'desc': self.cont,
+            'poems_count': self.poems_count
         }
         return d
 

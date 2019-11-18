@@ -9,7 +9,7 @@ from instance.models import PoemAuthor, Poem
 
 parser = reqparse.RequestParser()
 
-_args = ['page', 'count']
+_args = ['page', 'count', 'author']
 for _arg in _args:
     parser.add_argument(_arg)
 
@@ -32,7 +32,11 @@ class PoemsRes(Resource):
         args = parser.parse_args()
         page = int(args.get('page') or 1)
         count = int(args.get('count') or 10)
-        qs = Poem.objects()
+        author = args.get('author') or ''
+        if len(author) > 0:
+            qs = Poem.objects(author=author)
+        else:
+            qs = Poem.objects()
         total = qs.count()
         data = qs.skip((page+1)*count).limit(count)
         return {'count':total, 'poems': [a.pack() for a in data]}
