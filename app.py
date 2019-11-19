@@ -31,6 +31,7 @@ from instance.resource import (
     SpiderArtsRes,
     PoemAuthorsRes,
     PoemsRes,
+    PoemTagsRes,
 )
 from instance.errors import ApiBaseError, ResourceDoesNotExist, MissingRequiredParameter
 
@@ -104,7 +105,7 @@ api.add_resource(SpiderArtsRes, '/spiderarts')
 
 api.add_resource(PoemAuthorsRes, '/p/authors')
 api.add_resource(PoemsRes, '/p/poems')
-
+api.add_resource(PoemTagsRes, '/p/tags')
 
 if __name__ == '__main__':
     app.run(debug=True)

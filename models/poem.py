@@ -56,13 +56,31 @@ class Poem(DynamicDocument):
     tag = StringField()
 
     def pack(self):
-        tags = self.tag.split('|')
+        tags = []
+        if len(self.tag):
+            tags = self.tag.split('|')
+        cols = []
+        if len(self.collection):
+            cols = self.collection.split('|')
         d = {
             'id': str(self.id),
             'name': self.nameStr,
             'author': self.author,
             'dynasty': self.chaodai,
             'content': self.cont,
-            'tags': tags
+            'tags': tags,
+            'cols': cols
         }
         return d
+
+class PoemTag(DynamicDocument):
+    meta = {
+        'db_alias': 'poem_db',
+        'collection': 'tag_a'
+    }
+
+    id = ObjectIdField(primary_key=True, default=ObjectId)
+    name = StringField()
+
+    def pack(self):
+        return {'id':str(self.id), 'name': self.name}
