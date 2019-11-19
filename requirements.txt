@@ -8,3 +8,5 @@ cos-python-sdk-v5
 
 requests
 pycrypto
+gunicorn
+gevent
