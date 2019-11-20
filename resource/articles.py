@@ -2,6 +2,7 @@
 # author:xsl
 
 import requests
+import json
 from flask import g
 from flask_restful import reqparse, Resource
 from bson import ObjectId
@@ -92,8 +93,10 @@ class SpiderArticleRes(Resource):
     def post(self):
         args = parser.parse_args()
         article = args.get('article')
-        artjson = json.loads(article)
-        a = Article.from_json(artjson)
+        article = json.loads(article)
+        a = Article()
+        for key in article.keys():
+            setattr(a, key, article.get(key))
         a.save()
         return a.pack()
 
