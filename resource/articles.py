@@ -19,7 +19,7 @@ _args = ['id', 'url', 'page', 'count', 'type',
          'name', 'identifier', 'avatar',
          'level', 'status', 'trans_text',
          'cursor', 'direction', 'title',
-         'author', 'spider']
+         'author', 'spider', 'article']
 for _arg in _args:
     parser.add_argument(_arg)
 
@@ -85,6 +85,17 @@ class ArticlesRes(Resource):
         arts = list(qs.skip(skip).limit(count))
         total = qs.count()
         return {"count":total, "articles":[art.pack() for art in arts]}
+
+
+class SpiderArticleRes(Resource):
+
+    def post(self):
+        args = parser.parse_args()
+        article = args.get('article')
+        artjson = json.loads(article)
+        a = Article.from_json(artjson)
+        a.save()
+        return a.pack()
 
 
 class ArticleSpiderRes(Resource):

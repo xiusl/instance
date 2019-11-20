@@ -32,6 +32,7 @@ from instance.resource import (
     PoemAuthorsRes,
     PoemsRes,
     PoemTagsRes,
+    SpiderArticleRes,
 )
 from instance.errors import ApiBaseError, ResourceDoesNotExist, MissingRequiredParameter
 
@@ -101,7 +102,7 @@ api.add_resource(SettingsRes, '/settings')
 api.add_resource(SettingWxRes, '/setting/wx')
 api.add_resource(SettingPingRes, '/setting/ping')
 api.add_resource(SpiderArtsRes, '/spiderarts')
-
+api.add_resource(SpiderArticleRes, '/spider/article')
 
 api.add_resource(PoemAuthorsRes, '/p/authors')
 api.add_resource(PoemsRes, '/p/poems')
