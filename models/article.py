@@ -34,7 +34,9 @@ class Article(Document):
     images = ListField()
     type = StringField()
     status = IntField(default=0)
-    spider = IntField()
+    spider = IntField(default=0)
+
+
 
     def pack(self, trans=False):
         data = {}
