@@ -10,3 +10,5 @@ requests
 pycrypto
 gunicorn
 gevent
+
+qiniu

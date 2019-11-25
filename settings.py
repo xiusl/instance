@@ -36,3 +36,6 @@ EMAIL_SMTP_PORT = '465'
 EMAIL_ADMIN = 'help@xiusl.com'
 EMAIL_ADMIN_PWD = 'He110120.'
 
+
+QINIU_ACCESS = os.getenv('QINIU_ACCESS')
+QINIU_SECRET = os.getenv('QINIU_SECRET')

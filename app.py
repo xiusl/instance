@@ -33,6 +33,7 @@ from instance.resource import (
     PoemsRes,
     PoemTagsRes,
     SpiderArticleRes,
+    QiniuTokenRes,
 )
 from instance.errors import ApiBaseError, ResourceDoesNotExist, MissingRequiredParameter
 
@@ -107,6 +108,8 @@ api.add_resource(SpiderArticleRes, '/spider/article')
 api.add_resource(PoemAuthorsRes, '/p/authors')
 api.add_resource(PoemsRes, '/p/poems')
 api.add_resource(PoemTagsRes, '/p/tags')
+
+api.add_resource(QiniuTokenRes, '/qiniu/token')
 
 if __name__ == '__main__':
     app.run(debug=True)
