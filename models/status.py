@@ -39,10 +39,16 @@ class Status(Document):
         u = User.objects(id=ObjectId(self.user_id)).first()
         if not u:
             u = User()
+
+        imgs = []
+        for im in self.images:
+            im['url'] = 'http://image.sleen.top'+im['url']
+            imgs.append(im)
+
         s_dict = {
             'id': str(self.id),
             'content': self.content,
-            'images': self.images,
+            'images': imgs,
             'created_at': self.created_at,
             'updated_at': self.updated_at,
             'status': self.status,
