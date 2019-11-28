@@ -30,11 +30,13 @@ class StatusesRes(Resource):
 
     def get(self):
         args = parser.parse_args()
-        count = 10
-        page = 1
-        page -= page
-        ss = Status.objects.skip(page*count).limit(count).order_by('-created_at')
-        return list([s.pack(user_id=g.user_id) for s in ss])
+        page = int(args.get('page') or 1)
+        page = page if page > 0 else 1
+        count = int(args.get('count') or 10)
+        skip = (page-1)*count
+        qs = Status.objects
+        ss = qs.skip(skip).limit(count).order_by('-created_at')
+        return {'count':qs.count(), 'statuses': list([s.pack(user_id=g.user_id) for s in ss])}
 
 
     @login_required
@@ -42,11 +44,6 @@ class StatusesRes(Resource):
         args = parser.parse_args()
         content = args.get('content')
         images = args.get('images') or []
-        print(images)
-        print(type(images))
-        for im in images:
-            print(im)
-            print(type(im))
         user = g.user
         if not content:
             raise MissingRequiredParameter(['content'])

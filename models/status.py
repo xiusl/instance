@@ -26,8 +26,8 @@ class Status(Document):
     id = ObjectIdField(primary_key=True, default=ObjectId)
     content = StringField()
     images = ListField(DictField())
-    created_at = DateTimeField(default=datetime.datetime.now)
-    updated_at = DateTimeField(default=datetime.datetime.now)
+    created_at = DateTimeField(default=datetime.datetime.utcnow)
+    updated_at = DateTimeField(default=datetime.datetime.utcnow)
     status = IntField(default=0)
     user_id = ObjectIdField()
     like_count = IntField(default=0)
@@ -42,7 +42,7 @@ class Status(Document):
 
         imgs = []
         for im in self.images:
-            im['url'] = 'http://image.sleen.top'+im['url']
+            im['url'] = 'http://image.sleen.top/'+im['url']
             imgs.append(im)
 
         s_dict = {

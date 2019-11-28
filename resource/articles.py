@@ -46,8 +46,6 @@ class ArticleRes(Resource):
         art = Article.objects(id=ObjectId(id)).first()
         if not art:
             raise ResourceDoesNotExist
-        args = parser.parse_args()
-        trans_text = args.get('trans_text')
         if trans_text and len(trans_text) > 0:
             art.transcoding = trans_text
         title = args.get('title')
@@ -109,7 +107,9 @@ class ArticleSpiderRes(Resource):
         session = requests.session()
         headers = {'Content-Type':'application/json'}
         data = {'url': url}
-        res = session.post('http://149.129.97.184/spider', json=data, headers=headers, verify=False)
+        u = 'http://149.129.97.184/spider'
+        u = 'http://127.0.0.1:5001/spider'
+        res = session.post(u, json=data, headers=headers, verify=False)
         return {'ok':1}
 
 

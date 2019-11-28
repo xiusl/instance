@@ -42,7 +42,7 @@ class User(Document):
     desc = StringField()
     level = IntField(default=0)
     type = IntField(default=0)
-    created_at = DateTimeField(default=datetime.datetime.now)
+    created_at = DateTimeField(default=datetime.datetime.utcnow)
     status = IntField(default=0)
     followed_count = IntField(default=0)
     following_count = IntField(default=0)
@@ -162,7 +162,7 @@ class UserRelation(Document):
     id = ObjectIdField(primary_key=True, default=ObjectId)
     follower_id = ObjectIdField()
     followed_id = ObjectIdField()
-    created_at = DateTimeField(default=datetime.datetime.now())
+    created_at = DateTimeField(default=datetime.datetime.utcnow())
 
 
 
@@ -180,7 +180,7 @@ class VerifyCode(Document):
     key = StringField()
     code = StringField()
     expired_at = DateTimeField()
-    created_at = DateTimeField(default=datetime.datetime.now)
+    created_at = DateTimeField(default=datetime.datetime.utcnow)
 
     @classmethod
     def get(cls, key):
@@ -209,7 +209,7 @@ class UserAction(Document):
     status_id = ObjectIdField()
     user_id = ObjectIdField()
     action = StringField()
-    created_at = DateTimeField(default=datetime.datetime.now)
+    created_at = DateTimeField(default=datetime.datetime.utcnow)
 
 
 
