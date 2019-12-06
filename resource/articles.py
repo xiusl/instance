@@ -46,6 +46,7 @@ class ArticleRes(Resource):
         art = Article.objects(id=ObjectId(id)).first()
         if not art:
             raise ResourceDoesNotExist
+        trans_text = args.get('trans_text')
         if trans_text and len(trans_text) > 0:
             art.transcoding = trans_text
         title = args.get('title')
