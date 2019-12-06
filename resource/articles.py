@@ -108,7 +108,7 @@ class ArticleSpiderRes(Resource):
         session = requests.session()
         headers = {'Content-Type':'application/json'}
         data = {'url': url}
-        u = 'http://149.129.97.184/spider'
+        u = 'http://149.129.38.57/spider'
 #        u = 'http://127.0.0.1:5001/spider'
         res = session.post(u, json=data, headers=headers, verify=False)
         return {'ok':1}
