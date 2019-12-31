@@ -39,6 +39,12 @@ class Article(Document):
     user_id = ObjectIdField()
 
 
+    def save(self, *args, **kwargs):
+        if not user_id:
+            user = User.objects(phone='17600101706').first()
+            self.user = user.id
+        return spuer(Article, self).save(*args, **kwargs)
+
     def pack(self, trans=False, g_user=None):
         u = User.objects(id=ObjectId(self.user_id)).first()
         if not u:
