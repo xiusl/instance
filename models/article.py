@@ -12,6 +12,7 @@ from mongoengine import (
 from bson import ObjectId
 import datetime
 import time
+from instance.models import User
 
 DB_NAME = 'instance_db'
 
@@ -35,10 +36,13 @@ class Article(Document):
     type = StringField()
     status = IntField(default=0)
     spider = IntField(default=0)
+    user_id = ObjectIdField()
 
 
-
-    def pack(self, trans=False):
+    def pack(self, trans=False, g_user=None):
+        u = User.objects(id=ObjectId(self.user_id)).first()
+        if not u:
+            u = User()
         data = {}
         data['id'] = str(self.id)
         data['title'] = self.title
@@ -57,6 +61,7 @@ class Article(Document):
         data['images'] = self.images
         data['url'] = 'https://ins.sleen.top/articles/{}'.format(str(self.id))
         data['is_spider'] = self.spider
+        data['user'] = u.pack(user_id=g_user)
         return data 
 
 
@@ -99,6 +104,7 @@ class Source(Document):
         return sour_dict
 
 class SpArtSmp(Document):
+    # 批量抓取临时存储 url
     meta = {
         'db_alias': 'sp_db',
         'collection': 'tmp'

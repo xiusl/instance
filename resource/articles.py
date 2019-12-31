@@ -3,7 +3,7 @@
 
 import requests
 import json
-from flask import g
+from flask import g, current_app
 from flask_restful import reqparse, Resource
 from bson import ObjectId
 from instance.models import Article, SpArtSmp, Source
@@ -110,7 +110,8 @@ class ArticleSpiderRes(Resource):
         headers = {'Content-Type':'application/json'}
         data = {'url': url}
         u = 'http://149.129.38.57/spider'
-#        u = 'http://127.0.0.1:5001/spider'
+        if current_app.config['DEBUG']:
+            u = 'http://127.0.0.1:5001/spider'
         res = session.post(u, json=data, headers=headers, verify=False)
         return {'ok':1}
 
