@@ -15,6 +15,7 @@ import time
 from instance.models import User
 
 DB_NAME = 'instance_db'
+img_crop = '?imageMogr2/thumbnail/600x/interlace/0%7CimageMogr2/gravity/center/crop/800x600'
 
 class Article(Document):
     meta = {
@@ -64,10 +65,13 @@ class Article(Document):
         data['type'] = self.type
         data['status'] = self.status
         data['author_idf'] = self.author_idf
-        data['images'] = self.images
+        # data['images'] = self.images
         data['url'] = 'https://ins.sleen.top/articles/{}'.format(str(self.id))
         data['is_spider'] = self.spider
         data['user'] = u.pack(user_id=g_user)
+        
+        data['images'] = list([im + img_crop for im in self.images])
+
         return data 
 
 
