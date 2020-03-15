@@ -42,7 +42,7 @@ class User(Document):
     desc = StringField()
     level = IntField(default=0)
     type = IntField(default=0)
-    created_at = DateTimeField(default=datetime.datetime.utcnow)
+    created_at = DateTimeField(default=datetime.datetime.now)
     status = IntField(default=0)
     followed_count = IntField(default=0)
     following_count = IntField(default=0)
@@ -140,7 +140,7 @@ class User(Document):
             'phone': self.phone,
             'email': self.email,
             'avatar': self.avatar,
-            'created_at': self.created_at,
+            'created_at': self.created_at.isoformat(),
             'status': self.status,
             'level': self.level,
             'type': self.type,

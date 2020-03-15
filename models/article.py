@@ -30,8 +30,8 @@ class Article(Document):
     transcoding = StringField()
     author = StringField()
     author_idf = StringField()
-    published_at = DateTimeField(default=datetime.datetime.utcnow)
-    created_at = DateTimeField(default=datetime.datetime.utcnow)
+    published_at = DateTimeField(default=datetime.datetime.now)
+    created_at = DateTimeField(default=datetime.datetime.now)
     source = StringField()
     images = ListField()
     type = StringField()
@@ -59,8 +59,8 @@ class Article(Document):
         data['original_url'] = self.original_url
         data['original_id'] = self.original_id
         data['author'] = self.author
-        data['published_at'] = self.published_at
-        data['created_at'] = self.created_at
+        data['published_at'] = self.published_at.isoformat()
+        data['created_at'] = self.created_at.isoformat()
         data['source'] = self.source
         data['type'] = self.type
         data['status'] = self.status

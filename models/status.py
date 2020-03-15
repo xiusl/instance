@@ -26,8 +26,8 @@ class Status(Document):
     id = ObjectIdField(primary_key=True, default=ObjectId)
     content = StringField()
     images = ListField(DictField())
-    created_at = DateTimeField(default=datetime.datetime.utcnow)
-    updated_at = DateTimeField(default=datetime.datetime.utcnow)
+    created_at = DateTimeField(default=datetime.datetime.now)
+    updated_at = DateTimeField(default=datetime.datetime.now)
     status = IntField(default=0)
     user_id = ObjectIdField()
     like_count = IntField(default=0)
@@ -49,8 +49,8 @@ class Status(Document):
             'id': str(self.id),
             'content': self.content,
             'images': imgs,
-            'created_at': self.created_at,
-            'updated_at': self.updated_at,
+            'created_at': self.created_at.isoformat(),
+            'updated_at': self.updated_at.isoformat(),
             'status': self.status,
             'like_count': self.like_count,
             'is_liked': self.is_liked(user_id),
