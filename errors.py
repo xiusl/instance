@@ -9,6 +9,9 @@ class ApiBaseError(Exception):
                 if getattr(self, k)])
         return d
 
+class EndpointNotFound(ApiBaseError):
+    code = 404
+    message = "Endpoint not Found"
 
 class ResourceDoesNotExist(ApiBaseError):
     code = 404

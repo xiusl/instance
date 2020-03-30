@@ -10,7 +10,8 @@ from instance.errors import (
     OperationForbiddenError, 
     ResourceDoesNotExist, 
     MissingRequiredParameter,
-    TipMessageError
+    TipMessageError,
+    EndpointNotFound
 )
 from instance.utils import send_sms_code, send_email_code, login_required
 from instance.models import User, UserRelation, UserAction, Status, VerifyCode
@@ -29,6 +30,8 @@ class UserRes(Resource):
     def get(self, id):
         if not id:
             raise MissingRequiredParameter(['id'])
+        if not ObjectId.is_valid(id):
+            raise EndpointNotFound()
         user = User.objects(id=ObjectId(id)).first()
         if not user:
             raise ResourceDoesNotExist()
