@@ -98,7 +98,7 @@ class SpiderArticleRes(Resource):
         for key in article.keys():
             setattr(a, key, article.get(key))
         a.save()
-        return a.pack()
+        return article
 
 
 class ArticleSpiderRes(Resource):
@@ -109,7 +109,7 @@ class ArticleSpiderRes(Resource):
         session = requests.session()
         headers = {'Content-Type':'application/json'}
         data = {'url': url}
-        u = 'http://149.129.38.57/spider'
+        u = 'http://192.144.171.238/spider'
         if current_app.config['DEBUG']:
             u = 'http://127.0.0.1:5001/spider'
         res = session.post(u, json=data, headers=headers, verify=False)

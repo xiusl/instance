@@ -43,7 +43,8 @@ class Article(Document):
     def save(self, *args, **kwargs):
         if not self.user_id:
             user = User.objects(phone='17600101706').first()
-            self.user = user.id
+            if user:
+                self.user = user.id
         return super(Article, self).save(*args, **kwargs)
 
     def pack(self, trans=False, g_user=None):
