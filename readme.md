@@ -1,5 +1,10 @@
 ### instance api
 
+- 哩嗑 App 接口代码
+- Flask + Flask_Restful + mongoengine
+- 线上地址：https://ins-api.sleen.top
+- No gank!!! Thank you!!!
+
 ```
 api.add_resource(Authorizations, '/authorizations')
 api.add_resource(UsersRes, '/users')
