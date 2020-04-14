@@ -235,9 +235,6 @@ class VerifyCodes(Resource):
 
     def get(self):
         args = parser.parse_args()
-        invitecode = args.get('invitecode')
-        if invitecode != "inskkcode":
-            raise TipMessageError('Contact xiushilin@hotmail.com')
         key = args.get('key')
         vc = VerifyCode.get(key)
         now = datetime.datetime.now()
