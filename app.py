@@ -76,7 +76,7 @@ def before_request():
         g.user = u
         g.user_id = u.id if u else None
 
-    source = request.headers.get("X-Type") or ""
+    source = request.headers.get("X-Type") or "web"
     g.source = source 
 
 @app.errorhandler(ApiBaseError)

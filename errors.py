@@ -47,3 +47,7 @@ class BadRequestError(ApiBaseError):
 
     def __init__(self, msg):
         self.message = self.message + msg
+
+class ForbidenError(ApiBaseError):
+    code = 404
+    message = "Permission denied"

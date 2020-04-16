@@ -11,7 +11,8 @@ from instance.errors import (
     ResourceDoesNotExist, 
     MissingRequiredParameter,
     TipMessageError,
-    EndpointNotFound
+    EndpointNotFound,
+    ForbidenError
 )
 from instance.utils import send_sms_code, send_email_code, login_required
 from instance.models import User, UserRelation, UserAction, Status, VerifyCode
@@ -203,9 +204,10 @@ class Authorizations(Resource):
             user = User.objects(phone=phone).first()
             if not user:
                 raise BadRequestError('用户未注册')
-                #raise ResourceDoesNotExist()
             if not user.check_password(password):
                 raise BadRequestError('Password Error')
+            if g.source == 'web' and user.type != 9: # not admin
+                raise ForbidenError() 
             return user.pack(with_token=True)
 
         if not phone or not code:
