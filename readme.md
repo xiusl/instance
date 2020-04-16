@@ -1,13 +1,10 @@
 ### instance api
 
-<<<<<<< HEAD
-=======
 - 哩嗑 App 接口代码
 - Flask + Flask_Restful + mongoengine
 - 线上地址：https://ins-api.sleen.top
 - No gank!!! Thank you!!!
 
->>>>>>> 9a1c328a6922de19520c0fbf846fa20bfff9c543
 ```
 api.add_resource(Authorizations, '/authorizations')
 api.add_resource(UsersRes, '/users')
