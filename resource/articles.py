@@ -79,10 +79,13 @@ class ArticlesRes(Resource):
             return {"count":total, "articles":[art.pack() for art in arts]}
         page = int(args.get('page') or 1)
         skip = (page - 1)*count
-        if spider:
+        if spider: # 批量爬取的
             qs = Article.objects(spider=spider).filter(status__ne=-2).order_by("-created_at")
         else:
-            qs = Article.objects().filter(status__ne=-2).order_by("-created_at")
+            if g.source == 'web':
+                qs = Article.objects().filter().order_by("-created_at")
+            else:
+                qs = Article.objects().filter(status__ne=-2).order_by("-created_at")
         arts = list(qs.skip(skip).limit(count))
         total = qs.count()
         return {"count":total, "articles":[art.pack() for art in arts]}

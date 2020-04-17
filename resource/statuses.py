@@ -128,7 +128,7 @@ class StatusLikesRes(Resource):
         if not s:
             raise ResourceDoesNotExist()
         if s.is_liked(g.user_id):
-            return {"msg": "like faliure"}
+            return {"msg": "did liked"}
         r = UserAction(status_id=s.id, user_id=g.user_id, action=UserAction.ACTION_LIKE)
         r.save()
         s.like_count += 1
