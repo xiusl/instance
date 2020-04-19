@@ -17,7 +17,7 @@ from instance.models import User, Status, UserAction
 parser = reqparse.RequestParser()
 
 _args = ['id', 'page', 'cursor', 'director', 'count',
-        'content', ]
+        'content',]
 for arg in _args:
     parser.add_argument(arg)
 
@@ -47,9 +47,7 @@ class StatusesRes(Resource):
         user = g.user
         if not content:
             raise MissingRequiredParameter(['content'])
-        s = Status()
-        s.content = content
-        s.images = images
+        s = Status(content=content,images=images)
         s.user_id = user.id
         s.save()
         return s.pack() 

@@ -79,6 +79,10 @@ def before_request():
     source = request.headers.get("X-Type") or "web"
     g.source = source 
 
+@app.errorhandler(Exception)
+def handle_app_error(error):
+    return output_json('', 500, error=str(error))
+
 @app.errorhandler(ApiBaseError)
 def handle_api_error(error):
     return output_json(error.to_dict(), error.code)

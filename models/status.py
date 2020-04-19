@@ -20,7 +20,8 @@ DB_NAME = 'instance_db'
 class Status(Document):
     
     meta = {
-        'db_alias': DB_NAME
+        'db_alias': 'instance_db',
+        'collection': 'status'
     }
 
     id = ObjectIdField(primary_key=True, default=ObjectId)
@@ -43,6 +44,7 @@ class Status(Document):
         imgs = []
         for im in self.images:
             im['url'] = 'http://image.sleen.top/'+im['url']
+           # im = 'http://image.sleen.top/'+im
             imgs.append(im)
 
         s_dict = {
