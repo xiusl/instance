@@ -99,9 +99,12 @@ class StatusRes(Resource):
 class UserStatusesRes(Resource):
 
     def get(self, user_id):
+        args = parser.parse_args()
+        page = int(args.get('page') or 1)
+        count = int(args.get('count') or 10)
         if not user_id:
             raise MissingRequiredParameter(['user_id'])
-        ss = Status.objects(user_id=user_id).skip(0).limit(10).order_by('-created_at')
+        ss = Status.objects(user_id=user_id).skip(page*count-count).limit(count).order_by('-created_at')
         return [s.pack(g.user_id) for s in ss]
 
 
