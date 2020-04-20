@@ -1,15 +1,18 @@
 # coding=utf-8
 # author:xsl
 
-from flask import g, make_response, jsonify
 import json
+import smtplib
 from functools import wraps
-from instance import settings
-from instance.errors import LoginRequiredError
+from email.mime.text import MIMEText
+from flask import g, make_response, jsonify
+
 from twilio.rest import Client
 from qcloudsms_py import SmsSingleSender
-from email.mime.text import MIMEText
-import smtplib
+from qcloud_cos import CosConfig, CosS3Client
+
+from instance import settings
+from instance.errors import LoginRequiredError
 
 
 def login_required(func):
@@ -111,7 +114,7 @@ def send_email_code(to, code):
     content = '<h5>验证码:%s  (10分钟内有效)</h5>' % code
     return send_email(to, subject, content)
 
-from qcloud_cos import CosConfig, CosS3Client
+
 cos_config = CosConfig(Region='ap-beijing', 
         SecretId=settings.COS_SECRET_ID, 
         SecretKey=settings.COS_SECRET_KEY, Token=None)
@@ -134,3 +137,4 @@ def query_paging(qs, cursor, direction, count):
     else:
         objs = []
     return objs
+

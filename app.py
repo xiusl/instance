@@ -108,16 +108,11 @@ api.add_resource(SettingWxRes, '/setting/wx')
 api.add_resource(SettingPingRes, '/setting/ping')
 api.add_resource(SpiderArtsRes, '/spiderarts')
 api.add_resource(SpiderArticleRes, '/spider/article')
-
 api.add_resource(PoemAuthorsRes, '/p/authors')
 api.add_resource(PoemsRes, '/p/poems')
 api.add_resource(PoemTagsRes, '/p/tags')
-
 api.add_resource(QiniuTokenRes, '/qiniu/token')
 
 if __name__ == '__main__':
     app.run(debug=True)
-
-
-
 

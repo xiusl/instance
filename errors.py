@@ -1,7 +1,6 @@
 # coding=utf-8
 # author:xsl
 
-
 class ApiBaseError(Exception):
     def to_dict(self):
         d = dict([(k, getattr(self, k)) \
@@ -17,7 +16,6 @@ class ResourceDoesNotExist(ApiBaseError):
     code = 404
     message = 'A resource with that ID no longer exists.'
 
-
 class LoginRequiredError(ApiBaseError):
     code = 401
     message = 'Please login'
@@ -32,7 +30,6 @@ class TipMessageError(ApiBaseError):
 class OperationForbiddenError(ApiBaseError):
     code = 403
     message = 'Operation forbidden'
-
 
 class MissingRequiredParameter(ApiBaseError):
     code = 400
@@ -51,3 +48,4 @@ class BadRequestError(ApiBaseError):
 class ForbidenError(ApiBaseError):
     code = 404
     message = "Permission denied"
+

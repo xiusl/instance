@@ -1,6 +1,10 @@
 # coding=utf-8
 # author:xsl
 
+import datetime
+import time
+import random
+import hmac, hashlib, base64
 from mongoengine import (
     Document,
     ObjectIdField,
@@ -10,13 +14,8 @@ from mongoengine import (
 )
 from werkzeug.security import generate_password_hash, check_password_hash
 from bson import ObjectId
-import datetime
-import time
-import hmac, hashlib, base64
-import random
 
 DB_NAME = 'instance_db'
-
 
 def hmac_sha256(key, message):
     key = key.encode('utf8')
