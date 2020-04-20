@@ -82,7 +82,7 @@ class UserRes(Resource):
                 user.password = password
                 flag = True
         user.save()
-        return user.pack(with_token=flag)
+        return user.pack(with_token=flag, simple=bool(1-flag))
         
 
 class UsersRes(Resource):
@@ -111,7 +111,7 @@ class UsersRes(Resource):
             user.phone = phone
             user.password = 'Asd110#.'
             user.save()
-        return user.pack(with_token=True)
+        return user.pack(with_token=True, simple=False)
 
 
 
@@ -188,6 +188,7 @@ class Authorizations(Resource):
         phone = args.get('phone')
         code = args.get('code')
         password = args.get('password')
+        print(password)
         if password:
             account = args.get('account')
             if account and '@' in account:
@@ -196,7 +197,7 @@ class Authorizations(Resource):
                     raise ResourceDoesNotExist()
                 if not user.check_password(password):
                     raise BadRequestError('Password Error')
-                return user.pack(with_token=True)
+                return user.pack(with_token=True, simple=False)
             if account:
                 phone = account
             if not phone:
@@ -208,7 +209,7 @@ class Authorizations(Resource):
                 raise BadRequestError('Password Error')
             if g.source == 'web' and user.type != 9: # not admin
                 raise ForbidenError() 
-            return user.pack(with_token=True)
+            return user.pack(with_token=True, simple=False)
 
         if not phone or not code:
             raise MissingRequiredParameter(['phone', 'code'])
@@ -223,7 +224,7 @@ class Authorizations(Resource):
             user.phone = phone
             user.password = 'Asd110#.'
             user.save()
-        return user.pack(with_token=True)
+        return user.pack(with_token=True, simple=False)
 
     @login_required
     def get(self):
@@ -286,6 +287,6 @@ class UserPasswordRes(Resource):
         password = args.get('password')
         user.password = password
         user.save()
-        return user.pack(with_token=True)
+        return user.pack(with_token=True, simple=False)
 
 

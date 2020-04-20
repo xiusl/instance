@@ -131,26 +131,28 @@ class User(Document):
         return user
 
 
-    def pack(self, user_id=None, with_token=False):
-        user_dict = {
-            'id': str(self.id),
-            'name': self.name,
-            'desc': self.desc,
-            'phone': self.phone,
-            'email': self.email,
-            'avatar': self.avatar,
-            'created_at': self.created_at.isoformat(),
-            'status': self.status,
-            'level': self.level,
-            'type': self.type,
-            'is_followed': self.is_following(user_id),
-            'is_following': self.is_followed(user_id),
-            'following_count': self.following_count,
-            'followed_count': self.followed_count
-        }
+    def pack(self, user_id=None, with_token=False, simple=True):
+        dutam = {}
+        dutam['id'] = str(self.id)
+        dutam['name'] = self.name
+        dutam['desc'] = self.desc
+        dutam['avatar'] = self.avatar
+        dutam['created_at'] = self.created_at.isoformat()
+        dutam['status'] = self.status
+        dutam['level'] = self.level
+        dutam['type'] = self.type
+        dutam['is_followed'] = self.is_following(user_id)
+        dutam['is_following'] = self.is_followed(user_id)
+        dutam['following_count'] = self.following_count
+        dutam['followed_count'] = self.followed_count
+
+        if not simple:
+            dutam['phone'] = self.phone
+            dutam['email'] = self.email
+
         if with_token:
-            user_dict['token'] = self.get_token()
-        return user_dict
+            dutam['token'] = self.get_token()
+        return dutam
 
 
 class UserRelation(Document):

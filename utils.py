@@ -10,6 +10,11 @@ from flask import g, make_response, jsonify
 from twilio.rest import Client
 from qcloudsms_py import SmsSingleSender
 from qcloud_cos import CosConfig, CosS3Client
+from tencentcloud.common import credential
+from tencentcloud.common.profile.client_profile import ClientProfile
+from tencentcloud.common.profile.http_profile import HttpProfile
+from tencentcloud.common.exception.tencent_cloud_sdk_exception import TencentCloudSDKException
+from tencentcloud.sms.v20190711 import sms_client, models
 
 from instance import settings
 from instance.errors import LoginRequiredError
@@ -82,11 +87,41 @@ def send_sms_v2(to, content):
                 extend='',
                 ext='')
     except Exception as e:
+        print(e)
         return False
     code = int(result.get('result', -1))
     if code != 0:
         return False
     return True
+
+def send_sms_v3(to, content):
+    try:
+        appid = settings.SMS_TENC_ID
+        appkey = settings.SMS_TENC_KEY
+        cred = credential.Credential(appid, appkey)
+        httpProfile = HttpProfile()
+        httpProfile.endpoint = "sms.tencentcloudapi.com"
+        
+        clientProfile = ClientProfile()
+        clientProfile.httpProfile = httpProfile
+        client = sms_client.SmsClient(cred, "ap-beijing", clientProfile) 
+
+        req = models.SendSmsRequest()
+        p = {
+            'PhoneNumberSet': to,
+            'TemplateParamSet': [content],
+            'TemplateID': '211830',
+            'SmsSdkAppid': '1400208313'
+        }
+        req.from_json_string(json.dumps(p))
+        resp = client.SendSms(req)
+        print(resp)
+        print(resp.to_json_string())
+        return True
+
+    except TencentCloudSDKException as err:
+        print(err)
+        return False
 
 def send_sms_code(to, code):
     content = '验证码%s，如非本人操作请忽略。' % code
