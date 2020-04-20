@@ -232,7 +232,7 @@ class Authorizations(Resource):
         u = User.objects(id=ObjectId(user_id)).first()
         if not u:
             raise ResourceDoesNotExist()
-        return u.pack()
+        return u.pack(simple=False)
 
 class VerifyCodes(Resource):
 
