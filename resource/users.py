@@ -279,7 +279,7 @@ class UserStatusLikesRes(Resource):
         page = int(args.get('page') or 1)
         count = int(args.get('count') or 10)
         qs = UserAction.objects(user_id=u.id, action=UserAction.ACTION_LIKE)
-        rels = qs.skip(page*count-count).limit(count).order_by('-create_at')
+        rels = qs.skip(page*count-count).limit(count).order_by('-created_at')
         status_ids = list([rel.status_id for rel in rels])
         statuses = [Status.objects(id=ObjectId(s_id)).first() for s_id in status_ids]
         return list([s.pack(user_id=g.user_id) for s in statuses if s])
