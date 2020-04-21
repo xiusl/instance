@@ -3,7 +3,7 @@
 - 哩嗑 App 接口代码
 - Flask + Flask_Restful + mongoengine
 - 线上地址：https://ins-api.sleen.top
-- [Wiki](https://github.com/xiusl/instance/wiki)
+- 文档[Wiki](https://github.com/xiusl/instance/wiki)
 - No gank!!! Thank you!!!
 
 ```
