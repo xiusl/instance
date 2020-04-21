@@ -36,10 +36,7 @@ class UserRes(Resource):
         user = User.objects(id=ObjectId(id)).first()
         if not user:
             raise ResourceDoesNotExist()
-        c_user = g.user
-        if c_user:
-            return user.pack(user_id=c_user.id)
-        return user.pack()
+        return user.pack(user_id=g.user_id)
 
 
     @login_required
@@ -88,9 +85,12 @@ class UserRes(Resource):
 class UsersRes(Resource):
 
     def get(self):
+        args = parser.parse_args()
+        page = int(args.get('page') or 1)
+        count = int(args.get('count') or 10)
         qs = User.objects()
-        us = qs.limit(10)
         total = qs.count()
+        us = qs.skip(page*count-count).limit(count)
         return {"count":total, "users":[u.pack(user_id=g.user_id) for u in us]}
     
 
@@ -124,7 +124,10 @@ class UserFolloweds(Resource):
         user = User.objects(id=ObjectId(id)).first()
         if not user:
             raise ResourceDoesNotExist()
-        rels = UserRelation.objects(follower_id=user.id).skip(0).limit(10)
+        args = parser.parse_args()
+        page = int(args.get('page') or 1)
+        count = int(args.get('count') or 10)
+        rels = UserRelation.objects(follower_id=user.id).skip(page*count-count).limit(count)
         us = [rel.followed_id for rel in rels]
         return list([User.objects(id=uid).first().pack(user_id=g.user_id) for uid in us])
 
@@ -138,7 +141,10 @@ class UserFollowers(Resource):
         user = User.objects(id=ObjectId(id)).first()
         if not user:
             raise ResourceDoesNotExist()
-        rels = UserRelation.objects(followed_id=user.id).skip(0).limit(10)
+        args = parser.parse_args()
+        page = int(args.get('page') or 1)
+        count = int(args.get('count') or 10)
+        rels = UserRelation.objects(followed_id=user.id).skip(page*count-count).limit(count)
         us = [rel.follower_id for rel in rels]
         c_user = g.user
         uss = list([User.objects(id=uid).first().pack(user_id=c_user.id) for uid in us])
