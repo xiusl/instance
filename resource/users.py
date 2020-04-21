@@ -274,10 +274,15 @@ class UserStatusLikesRes(Resource):
         u = User.objects(id=ObjectId(id)).first()
         if not u:
             raise ResourceDoesNotExist()
-        rels = UserAction.objects(user_id=u.id, action=UserAction.ACTION_LIKE).limit(10)
+        
+        args = parser.parse_args()
+        page = int(args.get('page') or 1)
+        count = int(args.get('count') or 10)
+        qs = UserAction.objects(user_id=u.id, action=UserAction.ACTION_LIKE)
+        rels = qs.skip(page*count-count).limit(count)
         status_ids = list([rel.status_id for rel in rels])
-        statuses = list([Status.objects(id=ObjectId(s_id)).first().pack(user_id=g.user_id) for s_id in status_ids])
-        return statuses
+        statuses = [Status.objects(id=ObjectId(s_id)).first() for s_id in status_ids]
+        return list([s.pack(user_id=g.user_id) for s in statuses])
 
 
 class UserPasswordRes(Resource):

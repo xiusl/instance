@@ -44,7 +44,7 @@ class MyApi(Api):
         self.representations = {
             'application/json': output_json,
         }
-
+        self.debug = self.app.config['DEBUG']
         
     def handle_error(self, e):
         for val in current_app.error_handler_spec.values():
@@ -81,6 +81,8 @@ def before_request():
 
 @app.errorhandler(Exception)
 def handle_app_error(error):
+    if app.config['DEBUG']:
+        raise error
     return output_json('', 500, error=str(error))
 
 @app.errorhandler(ApiBaseError)

@@ -105,7 +105,7 @@ class UserStatusesRes(Resource):
         if not user_id:
             raise MissingRequiredParameter(['user_id'])
         ss = Status.objects(user_id=user_id).skip(page*count-count).limit(count).order_by('-created_at')
-        return [s.pack(g.user_id) for s in ss]
+        return [s.pack(g.user_id) for s in ss if s]
 
 
 class StatusLikesRes(Resource):
