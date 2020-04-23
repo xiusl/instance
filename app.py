@@ -34,6 +34,9 @@ from instance.resource import (
     PoemTagsRes,
     SpiderArticleRes,
     QiniuTokenRes,
+    FeedbackRes,
+    FeedbacksRes,
+    UserFeedbackRes,
 )
 from instance.errors import ApiBaseError, ResourceDoesNotExist, MissingRequiredParameter
 
@@ -114,6 +117,9 @@ api.add_resource(PoemAuthorsRes, '/p/authors')
 api.add_resource(PoemsRes, '/p/poems')
 api.add_resource(PoemTagsRes, '/p/tags')
 api.add_resource(QiniuTokenRes, '/qiniu/token')
+api.add_resource(FeedbackRes, '/feedbacks/<id>')
+api.add_resource(FeedbacksRes, '/feedbacks')
+api.add_resource(UserFeedbackRes, '/users/<id>/feedbacks')
 
 if __name__ == '__main__':
     app.run(debug=True)

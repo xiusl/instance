@@ -6,3 +6,4 @@ from .statuses import *
 from .articles import *
 from .setting import *
 from .poem import *
+from .feedback import *

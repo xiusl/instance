@@ -5,3 +5,4 @@ from .user import *
 from .status import *
 from .article import *
 from .poem import *
+from .feedback import *
