@@ -13,7 +13,7 @@ from instance.errors import (
     ResourceDoesNotExist,
     MissingRequiredParameter
 )
-from instance.utils import login_required
+from instance.utils import send_email_msg, login_required
 from instance.models import User, Feedback
 
 
@@ -46,6 +46,8 @@ class FeedbacksRes(Resource):
         f.contact = contact
         f.status = Feedback.STATUS_NEED_REPLAY
         f.save()
+    
+        send_email_msg('%s提交了反馈\n内容：%s' % (user.name, content))
         return f.pack()
 
     @login_required

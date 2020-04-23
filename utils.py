@@ -150,6 +150,9 @@ def send_email_code(to, code):
     return send_email(to, subject, content)
 
 
+def send_email_msg(msg):
+    return send_email('xiushilin@hotmail.com', '[哩嗑]后台信息提示', msg)
+
 cos_config = CosConfig(Region='ap-beijing', 
         SecretId=settings.COS_SECRET_ID, 
         SecretKey=settings.COS_SECRET_KEY, Token=None)

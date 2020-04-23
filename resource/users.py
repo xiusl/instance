@@ -194,7 +194,6 @@ class Authorizations(Resource):
         phone = args.get('phone')
         code = args.get('code')
         password = args.get('password')
-        print(password)
         if password:
             account = args.get('account')
             if account and '@' in account:
