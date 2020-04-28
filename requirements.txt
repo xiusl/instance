@@ -13,3 +13,5 @@ gevent
 
 qiniu
 tencentcloud-sdk-python
+
+aiosmtplib

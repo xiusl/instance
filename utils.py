@@ -3,9 +3,11 @@
 
 import json
 import smtplib
+import asyncio
 from functools import wraps
 from email.mime.text import MIMEText
 from flask import g, make_response, jsonify
+import aiosmtplib
 
 from twilio.rest import Client
 from qcloudsms_py import SmsSingleSender
@@ -144,14 +146,49 @@ def send_email(to, subject, content):
         return False
     return True
 
+
+async def send_email_async(to, subject, content):
+    msg = MIMEText(content.encode('utf8'), 'html', 'utf8')
+    msg['From'] = settings.EMAIL_ADMIN
+    msg['To'] = to
+    msg['Subject'] = subject
+    try:
+        return await aiosmtplib.send(
+            msg,
+            sender=settings.EMAIL_ADMIN,
+            recipients=[to],
+            hostname=settings.EMAIL_SMTP,
+            port=settings.EMAIL_SMTP_PORT,
+            username=settings.EMAIL_ADMIN,
+            password=settings.EMAIL_ADMIN_PWD,
+            use_tls=True
+        )
+    except Exception as e:
+        print(e)
+        return False
+
+def send_email_msg2(msg):
+    event_loop = asyncio.get_event_loop()
+    to = 'xiushilin@hotmail.com'
+    event_loop.run_until_complete(send_email_async(to, '[哩嗑]后台信息提示', msg))
+
+
 def send_email_code(to, code):
     subject = '[Instance]验证码为%s' % code
     content = '<h5>验证码:%s  (10分钟内有效)</h5>' % code
     return send_email(to, subject, content)
 
 
-def send_email_msg(msg):
-    return send_email('xiushilin@hotmail.com', '[哩嗑]后台信息提示', msg)
+def send_email_msg(msg, ac=True):
+    to = 'xiushilin@hotmail.com'
+    if ac:
+#        new_loop = asyncio.new_event_loop()
+        event_loop = asyncio.new_event_loop()
+        return event_loop.run_until_complete(send_email_async(to, '[哩嗑]后台信息提示', msg))
+    else:
+        return send_email('xiushilin@hotmail.com', '[哩嗑]后台信息提示', msg)
+
+
 
 cos_config = CosConfig(Region='ap-beijing', 
         SecretId=settings.COS_SECRET_ID, 
@@ -176,3 +213,6 @@ def query_paging(qs, cursor, direction, count):
         objs = []
     return objs
 
+
+if __name__ == '__main__':
+    send_email_msg2('123')
