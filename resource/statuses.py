@@ -34,7 +34,7 @@ class StatusesRes(Resource):
         page = page if page > 0 else 1
         count = int(args.get('count') or 10)
         skip = (page-1)*count
-        qs = Status.objects
+        qs = Status.objects().filter(status__ne=-2)
         ss = qs.skip(skip).limit(count).order_by('-created_at')
         return {'count':qs.count(), 'statuses': list([s.pack(user_id=g.user_id) for s in ss])}
 
@@ -93,7 +93,8 @@ class StatusRes(Resource):
         print(g.user.is_admin)
         if str(s.user_id) != str(g.user_id) and not g.user.is_admin:
             raise OperationForbiddenError()
-        s.delete()
+        s.status = -2
+        s.save()
         return {"msg": "Delete Success"}
 
 class UserStatusesRes(Resource):
@@ -104,7 +105,7 @@ class UserStatusesRes(Resource):
         count = int(args.get('count') or 10)
         if not user_id:
             raise MissingRequiredParameter(['user_id'])
-        ss = Status.objects(user_id=user_id).skip(page*count-count).limit(count).order_by('-created_at')
+        ss = Status.objects(user_id=user_id).filter(status__ne=-2).skip(page*count-count).limit(count).order_by('-created_at')
         return [s.pack(g.user_id) for s in ss if s]
 
 
