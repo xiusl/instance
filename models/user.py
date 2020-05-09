@@ -136,7 +136,13 @@ class User(Document):
         dutam['id'] = str(self.id)
         dutam['name'] = self.name
         dutam['desc'] = self.desc
-        dutam['avatar'] = self.avatar
+
+        avatar = self.avatar
+        if avatar.startswith('http'):
+            dutam['avatar'] = avatar
+        else:
+            dutam['avatar'] = 'https://image.sleen.top/' + avatar
+
         dutam['created_at'] = self.created_at.isoformat()
         dutam['status'] = self.status
         dutam['level'] = self.level
