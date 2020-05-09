@@ -37,6 +37,7 @@ from instance.resource import (
     FeedbackRes,
     FeedbacksRes,
     UserFeedbackRes,
+    SettingWxMiniRes,
 )
 from instance.errors import ApiBaseError, ResourceDoesNotExist, MissingRequiredParameter
 
@@ -120,6 +121,7 @@ api.add_resource(QiniuTokenRes, '/qiniu/token')
 api.add_resource(FeedbackRes, '/feedbacks/<id>')
 api.add_resource(FeedbacksRes, '/feedbacks')
 api.add_resource(UserFeedbackRes, '/users/<id>/feedbacks')
+api.add_resource(SettingWxMiniRes, '/wx_mini')
 
 if __name__ == '__main__':
     app.run(debug=True)

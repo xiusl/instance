@@ -38,6 +38,9 @@ EMAIL_ADMIN_PWD = 'He110120.'
 WX_AES_KEY = os.getenv('WX_AES_KEY') or ''
 WX_TOKEN = os.getenv('WX_TOKEN') or ''
 
+WX_MINI_ID = os.getenv('WX_MINI_ID') or ''
+WX_MINI_SECRET = os.getenv('WX_MINI_SECRET') or ''
+
 QINIU_ACCESS = os.getenv('QINIU_ACCESS')
 QINIU_SECRET = os.getenv('QINIU_SECRET')
 

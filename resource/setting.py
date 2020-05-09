@@ -10,7 +10,7 @@ from qiniu import Auth
 import settings
 
 parser = reqparse.RequestParser()
-_args = ['mime_type']
+_args = ['mime_type', 'code']
 for _arg in _args:
     parser.add_argument(_arg)
 
@@ -61,7 +61,7 @@ try:
 except ImportError:
   import xml.etree.ElementTree as ET
 
-from instance.wxsdk import WXBizMsgCrypt
+from instance.wxsdk import WXBizMsgCrypt, WXBizDataCrypt
   
 class SettingWxRes(Resource):
 
@@ -104,3 +104,30 @@ class SettingWxRes(Resource):
         res = requests.post(url, json=data, headers=headers, verify=False)
 
         return {'txt':'success'}
+
+class SettingWxMiniRes(Resource):
+
+    def post(self):
+        args = parser.parse_args()
+        code = args.get('code')
+        if code:
+            appid = settings.WX_MINI_ID
+            secret = settings.WX_MINI_SECRET
+            url = 'https://api.weixin.qq.com/sns/jscode2session?appid={}&secret={}&js_code={}&grant_type=authorization_code'.format(appid, secret, code)
+            resp = requests.get(url)
+            data = resp.json()
+            print(data)
+            return {'txt': '123'}
+
+
+        enc_data = args.get('enc_data')
+
+        appId = ''
+        sessionKey = ''
+        iv = args.get('iv')
+
+        pc = WXBizDataCrypt(appId, sessionKey)
+        
+        print(pc.decrypt(encryptedData, iv))
+        return {'txt': '12'}
+

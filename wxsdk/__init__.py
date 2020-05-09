@@ -2,3 +2,5 @@
 # author:xsl
  
 from .WXBizMsgCrypt import *
+from .WXBizDataCrypt import *
+
