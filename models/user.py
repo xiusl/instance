@@ -138,10 +138,10 @@ class User(Document):
         dutam['desc'] = self.desc
 
         avatar = self.avatar
-        if avatar.startswith('http'):
-            dutam['avatar'] = avatar
-        else:
+        if avatar and not avatar.startswith('http'):
             dutam['avatar'] = 'https://image.sleen.top/' + avatar
+        else:
+            dutam['avatar'] = avatar
 
         dutam['created_at'] = self.created_at.isoformat()
         dutam['status'] = self.status
