@@ -18,6 +18,7 @@ connect(alias=MONGO_DB, host=MONGO_URL,connect=False)
 
 connect(alias='sp_db', host='mongodb://127.0.0.1:27017/sp_db',connect=False)
 connect(alias='poem_db', host='mongodb://127.0.0.1:27017/poem_db',connect=False)
+connect(alias='log_db', host='mongodb://127.0.0.1:27017/log_db',connect=False)
 
 SMS_ACCOUNT = os.getenv('SMS_ACCOUNT') or ''
 SMS_TOKEN = os.getenv('SMS_TOKEN') or ''

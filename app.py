@@ -7,7 +7,7 @@ from flask_restful import Api
 from flask_cors import CORS
 
 import settings
-from instance.models import User
+from instance.models import User, ApiLog
 from instance.utils import output_json, cos_client
 from instance.resource import (
     StatusesRes, 
@@ -91,6 +91,14 @@ def teardown_request(e):
     user_id = g.user_id or ''
     path = request.path
     app.logger.info('User {} at {} request {}'.format(user_id, ip, path))
+    if 'favicon.ico' in path:
+        return 
+    l = ApiLog()
+    l.user_id = user_id
+    l.ip = ip
+    l.device_type = g.source or ''
+    l.path = path
+    l.save()
 
 
 @app.errorhandler(Exception)

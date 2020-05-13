@@ -24,8 +24,9 @@ class ApiLog(Document):
     }
 
     id = ObjectIdField(primary_key=True, default=ObjectId)
-    user_id = ObjectIdField()
+    user_id = StringField()
     device_type = StringField()
+    ip = StringField()
     path = StringField()
     created_at = DateTimeField(default=datetime.datetime.now)
     extra = DictField()
