@@ -96,6 +96,8 @@ def teardown_request(e):
     app.logger.info('User {} at {} request {}'.format(user_id, ip, path))
     if 'favicon.ico' in path:
         return 
+    if g.source == 'web':
+        return 
     l = ApiLog()
     if user_id:
         l.user_id = ObjectId(user_id)

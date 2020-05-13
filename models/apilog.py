@@ -37,8 +37,9 @@ class ApiLog(Document):
         datum['id'] = str(self.id)
         datum['user_id'] = str(self.user_id)
         datum['path'] = self.path
-        datum['create_at'] = self.created_at.isoformat()
+        datum['created_at'] = self.created_at.isoformat()
         datum['device_type'] = self.device_type
+        datum['ip'] = self.ip
 
         return datum
 

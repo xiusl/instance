@@ -21,7 +21,7 @@ class ApiLogRes(Resource):
         args = parser.parse_args()
         page = int(args.get('page') or 1)
         count = int(args.get('count') or 10)
-        qs = ApiLog.objects()
+        qs = ApiLog.objects().order_by('-created_at')
         data = qs.skip(page*count-count).limit(count)
-        return {"count":qs.count(), "logs":[q.pack() for q in qs]}
+        return {"count":qs.count(), "logs":[q.pack() for q in data]}
 
