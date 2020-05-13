@@ -33,7 +33,9 @@ class Feedback(DynamicDocument):
     replay = StringField()
     replay_time = DateTimeField()
     created_at = DateTimeField(default=datetime.datetime.now)
-    
+    ref_id = ObjectIdField()
+    type = IntField()
+
     def pack(self):
         datum = {}
         datum['id'] = str(self.id)

@@ -41,6 +41,7 @@ from instance.resource import (
     UserFeedbackRes,
     SettingWxMiniRes,
     ApiLogRes,
+    StatusShieldsRes,
 )
 from instance.errors import ApiBaseError, ResourceDoesNotExist, MissingRequiredParameter
 
@@ -147,7 +148,7 @@ api.add_resource(FeedbacksRes, '/feedbacks')
 api.add_resource(UserFeedbackRes, '/users/<id>/feedbacks')
 api.add_resource(SettingWxMiniRes, '/wx_mini')
 api.add_resource(ApiLogRes, '/logs')
-
+api.add_resource(StatusShieldsRes, '/statuses/<id>/shield')
 
 if __name__ == '__main__':
 #    app.run(debug=True)

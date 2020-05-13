@@ -19,7 +19,7 @@ from instance.models import User, Feedback
 
 parser = reqparse.RequestParser()
 _args = ['content', 'page', 'count', 'contact',
-    'replay', 'status']
+    'replay', 'status', 'ref_id', 'type']
 for _arg in _args:
     parser.add_argument(_arg)
 
@@ -39,12 +39,30 @@ class FeedbacksRes(Resource):
             raise ResourceDoesNotExist()
         
         contact = args.get('contact') or ''
+        ref_id = args.get('ref_id') 
+        type = args.get('type')
+        r_id = None
+        if type == 'status':
+            s = Status.objects(id=ObjectId(ref_id)).first()
+            if s:
+                s.status = -110
+                s.save()
+                r_id = s.id
+        elif type == 'article':
+            a = Article.objects(id=ObjectId(ref_id)).first()
+            if a:
+                a.status = -110
+                a.save()
+                r_id = a.id
+
 
         f = Feedback()
         f.user_id = user_id
         f.content = content
         f.contact = contact
         f.status = Feedback.STATUS_NEED_REPLAY
+        f.ref_id = r_id
+        f.type = type
         f.save()
     
         send_email_msg('%s提交了反馈\n内容：%s' % (user.name, content))

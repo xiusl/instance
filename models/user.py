@@ -211,6 +211,8 @@ class UserAction(Document):
     ACTION_LIKE = 'like'
     ACTION_UNLIKE = 'unlike'
 
+    ACTION_SHIELD = 'shield'
+    ACTION_UNSHIELD = 'unshield'
 
     id = ObjectIdField(primary_key=True, default=ObjectId)
     status_id = ObjectIdField()

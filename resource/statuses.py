@@ -37,7 +37,7 @@ class StatusesRes(Resource):
         if g.source == 'web':
             qs = Status.objects()
         else:
-            qs = Status.objects().filter(status__ne=-2)
+            qs = Status.objects().filter(status__gte=0)
         ss = qs.skip(skip).limit(count).order_by('-created_at')
         return {'count':qs.count(), 'statuses': list([s.pack(user_id=g.user_id) for s in ss])}
 
@@ -108,8 +108,33 @@ class UserStatusesRes(Resource):
         count = int(args.get('count') or 10)
         if not user_id:
             raise MissingRequiredParameter(['user_id'])
-        ss = Status.objects(user_id=user_id).filter(status__ne=-2).skip(page*count-count).limit(count).order_by('-created_at')
+        ss = Status.objects(user_id=user_id).filter(status__gte=0).skip(page*count-count).limit(count).order_by('-created_at')
         return [s.pack(g.user_id) for s in ss if s]
+
+class StatusShieldsRes(Resource):
+    
+    @login_required
+    def post(self, id):
+        if not id:
+            raise MissingRequiredParameter['id']
+        s = Status.objects(id=ObjectId(id)).first()
+        if not s:
+            raise ResourceDoesNotExist()
+
+        user_act = UserAction(status_id=s.id, user_id=g.user_id, action=UserAction.ACTION_SHIELD)
+        user_act.save()
+        return s.pack(user_id=g.user_id)
+
+    @login_required
+    def delete(self, id):
+        if not id:
+            raise MissingRequiredParameter['id']
+        s = Status.objects(id=ObjectId(id)).first()
+        if not s:
+            raise ResourceDoesNotExist()
+        r = UserAction.objects(status_id=s.id, user_id=g.user_id, action=UserAction.ACTION_SHIELD)
+        r.delete()
+        return s.pack(user_id=g.user_id)
 
 
 class StatusLikesRes(Resource):
