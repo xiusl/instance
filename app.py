@@ -40,6 +40,7 @@ from instance.resource import (
     FeedbacksRes,
     UserFeedbackRes,
     SettingWxMiniRes,
+    ApiLogRes,
 )
 from instance.errors import ApiBaseError, ResourceDoesNotExist, MissingRequiredParameter
 
@@ -81,6 +82,7 @@ def before_request():
         u = User.get_by_token(token)
         g.user = u
         g.user_id = u.id if u else None
+        g.user_type = u.type
 
     source = request.headers.get("X-Type") or "web"
     g.source = source 
@@ -89,13 +91,14 @@ def before_request():
 @app.teardown_request
 def teardown_request(e):
     ip = request.headers.get('X-Real-IP') or ''
-    user_id = str(g.user_id) or ''
+    user_id = g.user_id
     path = request.path
     app.logger.info('User {} at {} request {}'.format(user_id, ip, path))
     if 'favicon.ico' in path:
         return 
     l = ApiLog()
-    l.user_id = ObjectId(user_id)
+    if user_id:
+        l.user_id = ObjectId(user_id)
     l.ip = ip
     l.device_type = g.source or ''
     l.path = path
@@ -141,10 +144,12 @@ api.add_resource(FeedbackRes, '/feedbacks/<id>')
 api.add_resource(FeedbacksRes, '/feedbacks')
 api.add_resource(UserFeedbackRes, '/users/<id>/feedbacks')
 api.add_resource(SettingWxMiniRes, '/wx_mini')
+api.add_resource(ApiLogRes, '/logs')
+
 
 if __name__ == '__main__':
 #    app.run(debug=True)
-    app.run(debug=True, host="127.0.0.1", port=5050)
+    app.run(debug=True, host="127.0.0.1", port=5051)
 
 
 if __name__ != '__main__':

@@ -19,7 +19,7 @@ from tencentcloud.common.exception.tencent_cloud_sdk_exception import TencentClo
 from tencentcloud.sms.v20190711 import sms_client, models
 
 from instance import settings
-from instance.errors import LoginRequiredError
+from instance.errors import LoginRequiredError, OperationForbiddenError
 
 
 def login_required(func):
@@ -31,6 +31,17 @@ def login_required(func):
         return func(*args, **kwargs)
     return wrapper
 
+def admin_required(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        user_id = getattr(g, 'user_id', None)
+        if not user_id:
+            raise LoginRequiredError()
+        user_type = getattr(g, 'user_type', 0)
+        if int(user_type) != 9:
+            raise OperationForbiddenError()
+        return func(*args, **kwargs)
+    return wrapper
 
 def output_json(data, code, headers=None, error=None, extra=None):
     
