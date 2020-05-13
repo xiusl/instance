@@ -24,7 +24,7 @@ class ApiLog(Document):
     }
 
     id = ObjectIdField(primary_key=True, default=ObjectId)
-    user_id = StringField()
+    user_id = ObjectIdField()
     device_type = StringField()
     ip = StringField()
     path = StringField()

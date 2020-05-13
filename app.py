@@ -2,6 +2,7 @@
 # author:xsl
 
 import logging
+from bson import ObjectId
 from flask import Flask, g, current_app, request, make_response
 from flask_restful import Api
 from flask_cors import CORS
@@ -88,13 +89,13 @@ def before_request():
 @app.teardown_request
 def teardown_request(e):
     ip = request.headers.get('X-Real-IP') or ''
-    user_id = g.user_id or ''
+    user_id = str(g.user_id) or ''
     path = request.path
     app.logger.info('User {} at {} request {}'.format(user_id, ip, path))
     if 'favicon.ico' in path:
         return 
     l = ApiLog()
-    l.user_id = user_id
+    l.user_id = ObjectId(user_id)
     l.ip = ip
     l.device_type = g.source or ''
     l.path = path
