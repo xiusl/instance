@@ -1,6 +1,7 @@
 # coding=utf-8
 # author:xsl
 
+import logging
 from flask import Flask, g, current_app, request, make_response
 from flask_restful import Api
 from flask_cors import CORS
@@ -83,10 +84,19 @@ def before_request():
     source = request.headers.get("X-Type") or "web"
     g.source = source 
 
+
+@app.teardown_request
+def teardown_request(e):
+    ip = request.headers.get('X-Real-IP') or ''
+    user_id = g.user_id or ''
+    path = request.path
+    app.logger.info('User {} at {} request {}'.format(user_id, ip, path))
+
+
 @app.errorhandler(Exception)
 def handle_app_error(error):
-    if app.config['DEBUG']:
-        raise error
+#    if app.config['DEBUG']:
+#raise error
     return output_json('', 500, error=str(error))
 
 @app.errorhandler(ApiBaseError)
@@ -124,5 +134,11 @@ api.add_resource(UserFeedbackRes, '/users/<id>/feedbacks')
 api.add_resource(SettingWxMiniRes, '/wx_mini')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+#    app.run(debug=True)
+    app.run(debug=True, host="127.0.0.1", port=5050)
 
+
+if __name__ != '__main__':
+    gunicorn_logger = logging.getLogger('gunicorn.access')
+    app.logger.handlers = gunicorn_logger.handlers
+    app.logger.setLevel(gunicorn_logger.level)
