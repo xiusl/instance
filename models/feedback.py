@@ -55,16 +55,19 @@ class Feedback(DynamicDocument):
             u = User.objects(id=ObjectId(self.user_id)).first()
             if u:
                 datum['user'] = u.pack()
-
+        
+        datum['obj_url'] = ''
         if self.ref_id:
             if self.type == 'status':
                 s = Status.objects.with_id(self.ref_id)
                 if s:
                     datum['obj'] = s.pack()
+                    datum['obj_url'] = '/statuses/' + str(s.id)
             elif self.type == 'article':
                 a = Article.objects.with_id(self.ref_id)
                 if a:
                     datum['obj'] = a.pack()
+                    datum['obj_url'] = '/articles/' + str(a.id)
 
         return datum
 
