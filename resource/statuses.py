@@ -34,10 +34,17 @@ class StatusesRes(Resource):
         page = page if page > 0 else 1
         count = int(args.get('count') or 10)
         skip = (page-1)*count
+
+        status_ids = []
+        if g.user_id:
+            rels = UserAction.objects(user_id=g.user_id, action=UserAction.ACTION_SHIELD)
+            status_ids = list([rel.status_id for rel in rels])
+
         if g.source == 'web':
             qs = Status.objects()
         else:
-            qs = Status.objects().filter(status__gte=0)
+            qs = Status.objects().filter(status__gte=0, id__not__in=status_ids)
+
         ss = qs.skip(skip).limit(count).order_by('-created_at')
         return {'count':qs.count(), 'statuses': list([s.pack(user_id=g.user_id) for s in ss])}
 

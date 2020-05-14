@@ -72,5 +72,11 @@ class Status(Document):
         user_id = str(user_id)
         return user_id and user_id in self.likers
 
+    @property
+    def shielders(self):
+        rels = UserAction.objects(status_id=self.id, action=UserAction.ACTION_SHIELD)
+        return list([str(rel.user_id) for rel in rels])
 
-
+    def is_shield(self, user_id):
+        user_id = str(user_id)
+        return user_id and user_id in self.shielders

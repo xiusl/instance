@@ -83,7 +83,7 @@ def before_request():
         u = User.get_by_token(token)
         g.user = u
         g.user_id = u.id if u else None
-        g.user_type = u.type
+        g.user_type = u.type if u else 0
 
     source = request.headers.get("X-Type") or "web"
     g.source = source 
@@ -97,7 +97,9 @@ def teardown_request(e):
     app.logger.info('User {} at {} request {}'.format(user_id, ip, path))
     if 'favicon.ico' in path:
         return 
-    if g.source == 'web':
+    
+    source = getattr(g, 'source', 'web')
+    if source == 'web':
         return 
     l = ApiLog()
     if user_id:
@@ -110,8 +112,8 @@ def teardown_request(e):
 
 @app.errorhandler(Exception)
 def handle_app_error(error):
-#    if app.config['DEBUG']:
-#raise error
+    if app.config['DEBUG']:
+        raise error
     return output_json('', 500, error=str(error))
 
 @app.errorhandler(ApiBaseError)
