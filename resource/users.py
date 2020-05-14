@@ -78,6 +78,8 @@ class UserRes(Resource):
             if user.check_password(old_password):
                 user.password = password
                 flag = True
+            else:
+                raise BadRequestError('old password error') 
         user.save()
         return user.pack(with_token=flag, simple=bool(1-flag))
         
