@@ -15,6 +15,8 @@ from mongoengine import (
 from bson import ObjectId
 
 from .user import User
+from .status import Status
+from .article import Article
 
 
 class Feedback(DynamicDocument):
@@ -34,7 +36,7 @@ class Feedback(DynamicDocument):
     replay_time = DateTimeField()
     created_at = DateTimeField(default=datetime.datetime.now)
     ref_id = ObjectIdField()
-    type = IntField()
+    type = StringField()
 
     def pack(self):
         datum = {}
@@ -44,6 +46,7 @@ class Feedback(DynamicDocument):
         datum['status'] = self.status
         datum['replay'] = self.replay
         datum['created_at'] = self.created_at.isoformat()
+        datum['type'] = self.type
 
         if self.replay_time:
             datum['replay_time'] = self.replay_time.isoformat()
@@ -52,6 +55,16 @@ class Feedback(DynamicDocument):
             u = User.objects(id=ObjectId(self.user_id)).first()
             if u:
                 datum['user'] = u.pack()
+
+        if self.ref_id:
+            if self.type == 'status':
+                s = Status.objects.with_id(self.ref_id)
+                if s:
+                    datum['obj'] = s.pack()
+            elif self.type == 'article':
+                a = Article.objects.with_id(self.ref_id)
+                if a:
+                    datum['obj'] = a.pack()
 
         return datum
 

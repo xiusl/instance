@@ -14,7 +14,7 @@ from instance.errors import (
     MissingRequiredParameter
 )
 from instance.utils import send_email_msg, login_required
-from instance.models import User, Feedback
+from instance.models import User, Status, Article, Feedback
 
 
 parser = reqparse.RequestParser()
@@ -64,8 +64,9 @@ class FeedbacksRes(Resource):
         f.ref_id = r_id
         f.type = type
         f.save()
-    
-        send_email_msg('%s提交了反馈\n内容：%s' % (user.name, content))
+
+        if not r_id: 
+            send_email_msg('%s提交了反馈\n内容：%s' % (user.name, content))
         return f.pack()
 
     @login_required
