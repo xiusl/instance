@@ -123,7 +123,7 @@ def send_sms_v3(to, content):
         p = {
             'PhoneNumberSet': to,
             'TemplateParamSet': [content],
-            'TemplateID': '211830',
+            'TemplateID': '277951',
             'SmsSdkAppid': '1400208313'
         }
         req.from_json_string(json.dumps(p))
