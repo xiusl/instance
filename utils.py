@@ -137,7 +137,7 @@ def send_sms_v3(to, content):
         return False
 
 def send_sms_code(to, code):
-    content = '验证码%s，如非本人操作请忽略。' % code
+    content = '【哩嗑APP】验证码%s，如非本人操作请忽略。' % code
     return send_sms_v2(to, content)
 
 
