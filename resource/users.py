@@ -221,7 +221,7 @@ class Authorizations(Resource):
         if not phone or not code:
             raise MissingRequiredParameter(['phone', 'code'])
         vc = VerifyCode.get(phone)
-        if int(vc.code) != int(code):
+        if not vc or int(vc.code) != int(code):
             raise BadRequestError('VerifyCode Error')
         if vc.expired_at < datetime.datetime.now():
             raise BadRequestError('VerifyCode Expired')
