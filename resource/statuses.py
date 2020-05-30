@@ -12,12 +12,13 @@ from instance.errors import (
     OperationForbiddenError
 )
 from instance.utils import login_required
-from instance.models import User, Status, UserAction
+from instance.models import User, Status, UserAction, Topic
 
 parser = reqparse.RequestParser()
 
 _args = ['id', 'page', 'cursor', 'director', 'count',
-        'content',]
+        'content', 'name', 'desc', 'logo',
+        'topic_id']
 for arg in _args:
     parser.add_argument(arg)
 
@@ -54,11 +55,14 @@ class StatusesRes(Resource):
         args = parser.parse_args()
         content = args.get('content')
         images = args.get('images') or []
+        topic_id = args.get('topic_id')
         user = g.user
         if not content:
             raise MissingRequiredParameter(['content'])
         s = Status(content=content,images=images)
         s.user_id = user.id
+        if topic_id:
+            s.topic_id = ObjectId(topic_id)
         s.save()
         return s.pack() 
 
@@ -166,7 +170,9 @@ class StatusLikesRes(Resource):
             raise ResourceDoesNotExist()
         if s.is_liked(g.user_id):
             return {"msg": "did liked"}
-        r = UserAction(status_id=s.id, user_id=g.user_id, action=UserAction.ACTION_LIKE)
+        r = UserAction(status_id=s.id, 
+                user_id=g.user_id, 
+                action=UserAction.ACTION_LIKE)
         r.save()
         s.like_count += 1
         s.save()
@@ -182,9 +188,59 @@ class StatusLikesRes(Resource):
             raise ResourceDoesNotExist()
         if not s.is_liked(g.user_id):
             return {"msg": "unlike faliure"}
-        r = UserAction.objects(status_id=s.id, user_id=g.user_id, action=UserAction.ACTION_LIKE)
+        r = UserAction.objects(status_id=s.id, 
+                user_id=g.user_id, 
+                action=UserAction.ACTION_LIKE)
         r.delete()
         s.like_count -= 1
         s.save()
         return s.pack(user_id=g.user_id)
 
+class TopicsRes(Resource):
+
+    def get(self):
+        args = parser.parse_args()
+        page = int(args.get('page') or 1)
+        count = int(args.get('count') or 10)
+
+        qs = Topic.objects()
+        tps = qs.skip(page*count-count).limit(count)
+        
+        return {'count': qs.count(), 'topics': [t.pack() for t in tps]}
+
+    @login_required
+    def post(self):
+        args = parser.parse_args()
+        name = args.get('name')
+        if not name or len(str(name)) == 0:
+            raise MissingRequiredParameter(['name'])
+        logo = args.get('logo')
+        desc = args.get('desc')
+
+        t = Topic.objects(name=name).first()
+        if t:
+            return t.pack()
+        t = Topic()
+        t.name = name
+        t.logo = logo
+        t.desc = desc
+        t.user_id = g.user_id
+        t.save()
+
+        return t.pack()
+
+
+class TopicStatusesRes(Resource):
+
+    def get(self, id):
+        args = parser.parse_args()
+        page = int(args.get('page') or 1)
+        count = int(args.get('count') or 10)
+
+        qs = Status.objects(topic_id=id)\
+                .filter(status__gte=0).order_by('-created_at')
+
+        ss = qs.skip(page*count-count).limit(count)
+        
+        return {'count': qs.count(), 
+                'statuses': [s.pack(user_id=g.user_id) for s in ss]}

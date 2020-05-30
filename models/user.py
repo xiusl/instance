@@ -214,11 +214,22 @@ class UserAction(Document):
     ACTION_SHIELD = 'shield'
     ACTION_UNSHIELD = 'unshield'
 
+
     id = ObjectIdField(primary_key=True, default=ObjectId)
     status_id = ObjectIdField()
     user_id = ObjectIdField()
     action = StringField()
     created_at = DateTimeField(default=datetime.datetime.utcnow)
 
+
+class UserTopicRef(Document):
+    meta = {
+        'db_alias': DB_NAME
+    }
+
+    id = ObjectIdField(primary_key=True, default=ObjectId)
+    user_id = ObjectIdField()
+    topic_id = ObjectIdField()
+    # todo
 
 

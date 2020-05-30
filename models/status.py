@@ -33,13 +33,21 @@ class Status(Document):
     user_id = ObjectIdField()
     like_count = IntField(default=0)
     bury_count = IntField(default=0)
+    topic_id = ObjectIdField()
     
-
-
     def pack(self, user_id=None):
+        datums = {}
+
         u = User.objects(id=ObjectId(self.user_id)).first()
         if not u:
             u = User()
+        datums['user'] = u.pack()
+
+        datums['topic'] = {}
+        t = Topic.objects(id=ObjectId(self.topic_id)).first()
+        if t:
+            datums['topic'] = t.pack()
+        
 
         imgs = []
         for im in self.images:
@@ -47,19 +55,18 @@ class Status(Document):
            # im = 'http://image.sleen.top/'+im
             imgs.append(im)
 
-        s_dict = {
-            'id': str(self.id),
-            'content': self.content,
-            'images': imgs,
-            'created_at': self.created_at.isoformat(),
-            'updated_at': self.updated_at.isoformat(),
-            'status': self.status,
-            'like_count': self.like_count,
-            'is_liked': self.is_liked(user_id),
-            'bury_count': self.bury_count,
-            'user': u.pack(user_id)
-        }
-        return s_dict
+        datums['images'] = imgs
+
+        datums['id'] = str(self.id)
+        datums['content'] = self.content
+        datums['created_at'] = self.created_at.isoformat()
+        datums['updated_at'] = self.updated_at.isoformat()
+        datums['status'] = self.status
+        datums['like_count'] = self.like_count
+        datums['is_liked'] = self.is_liked(user_id)
+        datums['bury_count'] = self.bury_count
+        
+        return datums
 
 
     @property
@@ -92,6 +99,7 @@ class Topic(Document):
     id = ObjectIdField(primary_key=True, default=ObjectId)
     name = StringField()
     logo = StringField()
+    desc = StringField()
     type = IntField()
     status = IntField(default=0)
     level = IntField(default=0)
@@ -99,11 +107,23 @@ class Topic(Document):
     created_at = DateTimeField(default=datetime.datetime.now)
 
 
-    def pack(self):
+    def save(self, *args, **kwargs):
+        if not self.logo:
+            self.logo = 'https://image.sleen.top/default.jpg'
+
+        return super(Topic, self).save(*args, **kwargs)
+
+    def pack(self, with_user=False):
         datums = {}
+
+        if with_user:
+            u = User.objects(id=ObjectId(self.user_id)).first()
+            if u:
+                datums['user'] = u.pack()
 
         datums['id'] = str(self.id)
         datums['name'] = self.name
+        datums['desc'] = self.desc
         datums['logo'] = self.logo
         datums['type'] = self.type
         datums['status'] = self.status
@@ -111,3 +131,5 @@ class Topic(Document):
         datums['created_at'] = self.created_at.isoformat()
 
         return datums
+
+
