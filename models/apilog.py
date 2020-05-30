@@ -29,6 +29,7 @@ class ApiLog(Document):
     ip = StringField()
     path = StringField()
     created_at = DateTimeField(default=datetime.datetime.now)
+    method = StringField()
     extra = DictField()
 
     def pack(self):
@@ -40,6 +41,7 @@ class ApiLog(Document):
         datum['created_at'] = self.created_at.strftime("%Y-%m-%d %H:%M:%S") #.isoformat()
         datum['device_type'] = self.device_type
         datum['ip'] = self.ip
+        datum['method'] = self.method
 
         return datum
 

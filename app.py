@@ -94,6 +94,7 @@ def teardown_request(e):
     ip = request.headers.get('X-Real-IP') or ''
     user_id = g.user_id
     path = request.path
+    method = request.method
     app.logger.info('User {} at {} request {}'.format(user_id, ip, path))
     if 'favicon.ico' in path:
         return 
@@ -107,6 +108,7 @@ def teardown_request(e):
     l.ip = ip
     l.device_type = g.source or ''
     l.path = path
+    l.method = method
     l.save()
 
 

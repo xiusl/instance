@@ -80,3 +80,34 @@ class Status(Document):
     def is_shield(self, user_id):
         user_id = str(user_id)
         return user_id and user_id in self.shielders
+
+
+
+class Topic(Document):
+
+    meta = {
+        'db_alias': 'instance_db'
+    }
+
+    id = ObjectIdField(primary_key=True, default=ObjectId)
+    name = StringField()
+    logo = StringField()
+    type = IntField()
+    status = IntField(default=0)
+    level = IntField(default=0)
+    user_id = ObjectIdField()  # created by user 
+    created_at = DateTimeField(default=datetime.datetime.now)
+
+
+    def pack(self):
+        datums = {}
+
+        datums['id'] = str(self.id)
+        datums['name'] = self.name
+        datums['logo'] = self.logo
+        datums['type'] = self.type
+        datums['status'] = self.status
+        datums['level'] = self.level
+        datums['created_at'] = self.created_at.isoformat()
+
+        return datums
