@@ -12,13 +12,13 @@ from instance.errors import (
     OperationForbiddenError
 )
 from instance.utils import login_required
-from instance.models import User, Status, UserAction, Topic
+from instance.models import TopicUserRef, User, Status, UserAction, Topic
 
 parser = reqparse.RequestParser()
 
 _args = ['id', 'page', 'cursor', 'director', 'count',
         'content', 'name', 'desc', 'logo',
-        'topic_id']
+        'topic_id','topic']
 for arg in _args:
     parser.add_argument(arg)
 
@@ -55,14 +55,15 @@ class StatusesRes(Resource):
         args = parser.parse_args()
         content = args.get('content')
         images = args.get('images') or []
-        topic_id = args.get('topic_id')
+        topic = args.get('topic')
         user = g.user
         if not content:
             raise MissingRequiredParameter(['content'])
         s = Status(content=content,images=images)
         s.user_id = user.id
-        if topic_id:
-            s.topic_id = ObjectId(topic_id)
+        if ObjectId.is_valid(topic):
+            s.topic_id = ObjectId(topic)
+
         s.save()
         return s.pack() 
 
@@ -244,3 +245,35 @@ class TopicStatusesRes(Resource):
         
         return {'count': qs.count(), 
                 'statuses': [s.pack(user_id=g.user_id) for s in ss]}
+
+
+class TopicUsersRes(Resource):
+    # /topics/<id>/users
+
+    def get(self, id):
+        # get users of topic
+        return 'todo'
+
+    @login_required
+    def post(self, id):
+        t = Topic.objects(id=ObjectId(id)).first()
+        if not t:
+            raise ResourceDoesNotExist()
+        ref = TopicUserRef()
+        ref.topic_id = id
+        ref.user_id = g.user_id
+        ref.action = TopicUserRef.JOIN
+        ref.save()
+        return ref.pack()
+
+    @login_required
+    def delete(self, id):
+        t = Topic.objects(id=ObjectId(id)).first()
+        if not t:
+            raise ResourceDoesNotExist()
+        ref = TopicUserRef.objects(topic_id=id,
+                user_id=g.user_id).first()
+        if ref:
+            ref.delete()
+        
+        return ref.pack()

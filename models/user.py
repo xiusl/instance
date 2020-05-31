@@ -227,9 +227,12 @@ class UserTopicRef(Document):
         'db_alias': DB_NAME
     }
 
+    JOIN = 'join'
+    SHIELD = 'shield'
+
     id = ObjectIdField(primary_key=True, default=ObjectId)
     user_id = ObjectIdField()
     topic_id = ObjectIdField()
-    # todo
-
+    action = StringField()
+    created_at = DateTimeField(default=datetime.datetime.utcnow)
 

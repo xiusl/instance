@@ -15,7 +15,7 @@ from instance.errors import (
     ForbidenError
 )
 from instance.utils import send_sms_code, send_email_code, login_required
-from instance.models import User, UserRelation, UserAction, Status, VerifyCode
+from instance.models import User, TopicUserRef, UserRelation, UserAction, Status, VerifyCode
 
 parser = reqparse.RequestParser()
 
@@ -300,5 +300,33 @@ class UserPasswordRes(Resource):
         user.password = password
         user.save()
         return user.pack(with_token=True, simple=False)
+
+
+class UserTopicsRes(Resource):
+    # users/<id>/topics
+
+    def get(self, id):
+        args = parser.parse_args()
+        page = int(args.get('page') or 1)
+        count = int(args.get('count') or 10)
+        qs = Topic.objects(user_id=id).order_by('-created_at')
+        ts = qs.skip(page*count-count).limit(count)
+        return {'count': qs.count(), 'topics': [t.pack() for t in ts]}
+
+
+class UserTopicJoinsRes(Resource):
+    # users/<id>/topics/joins
+
+    def get(self, id):
+        args = parser.parse_args()
+        page = int(args.get('page') or 1)
+        count = int(args.get('count') or 10)
+        qs = UserTopicRef.objects(user_id=u.id, 
+                                   action=UserTopicRef.JOIN)\
+                .order_by('-created_at')
+        rels = qs.skip(page*count-count).limit(count)
+        t_ids = list([rel.topic_id for rel in rels])
+        ts = Topic.objects().filter(id__in=status_ids)
+        return [t.pack() for t in ts]
 
 
