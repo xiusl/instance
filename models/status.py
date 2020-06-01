@@ -13,7 +13,7 @@ from mongoengine import (
 from bson import ObjectId
 import datetime
 import time
-from instance.models import User, UserAction
+from instance.models import User, UserTopicRef, UserAction
 
 DB_NAME = 'instance_db'
 
@@ -104,22 +104,37 @@ class Topic(Document):
     status = IntField(default=0)
     level = IntField(default=0)
     user_id = ObjectIdField()  # created by user 
+    joined_count = IntField(default=0)
     created_at = DateTimeField(default=datetime.datetime.now)
 
 
     def save(self, *args, **kwargs):
         if not self.logo:
             self.logo = 'https://image.sleen.top/default.jpg'
-
+        if self.joined_count < 0:
+            self.joined_count = 0
         return super(Topic, self).save(*args, **kwargs)
 
-    def pack(self, with_user=False):
+
+    @property
+    def joiners(self):
+        rels = UserTopicRef.objects(topic_id=self.id, action=UserTopicRef.JOIN)
+        return [str(rel.user_id) for rel in rels]
+
+    def is_joined(self, user_id):
+        user_id = str(user_id)
+        return user_id and user_id in self.joiners
+
+    def pack(self, user_id=None, with_user=False):
         datums = {}
 
         if with_user:
             u = User.objects(id=ObjectId(self.user_id)).first()
             if u:
                 datums['user'] = u.pack()
+
+        
+        datums['joined'] = self.is_joined(user_id)
 
         datums['id'] = str(self.id)
         datums['name'] = self.name
@@ -128,6 +143,7 @@ class Topic(Document):
         datums['type'] = self.type
         datums['status'] = self.status
         datums['level'] = self.level
+        datums['joined_count'] = self.joined_count
         datums['created_at'] = self.created_at.isoformat()
 
         return datums

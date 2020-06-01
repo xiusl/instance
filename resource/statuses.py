@@ -12,7 +12,7 @@ from instance.errors import (
     OperationForbiddenError
 )
 from instance.utils import login_required
-from instance.models import TopicUserRef, User, Status, UserAction, Topic
+from instance.models import UserTopicRef, User, Status, UserAction, Topic
 
 parser = reqparse.RequestParser()
 
@@ -207,7 +207,8 @@ class TopicsRes(Resource):
         qs = Topic.objects()
         tps = qs.skip(page*count-count).limit(count)
         
-        return {'count': qs.count(), 'topics': [t.pack() for t in tps]}
+        return {'count': qs.count(), 
+            'topics': [t.pack(user_id=g.user_id) for t in tps]}
 
     @login_required
     def post(self):
@@ -228,7 +229,7 @@ class TopicsRes(Resource):
         t.user_id = g.user_id
         t.save()
 
-        return t.pack()
+        return t.pack(user_id=g.user_id)
 
 
 class TopicStatusesRes(Resource):
@@ -252,28 +253,48 @@ class TopicUsersRes(Resource):
 
     def get(self, id):
         # get users of topic
-        return 'todo'
+        args = parser.parse_args()
+        page = int(args.get('page') or 1)
+        count = int(args.get('count') or 10)
+
+        rels = UserTopicRef.objects(topic_id=id,
+                action=UserTopicRef.JOIN)\
+                    .order_by('-created_at')
+        qs = rels.skip(page*count-count).limit(count)
+        uids = [rel.user_id for rel in qs]
+
+        users = User.objects().filter(id__in=uids)
+        return [u.pack(user_id=g.user_id) for u in users]
 
     @login_required
     def post(self, id):
         t = Topic.objects(id=ObjectId(id)).first()
         if not t:
             raise ResourceDoesNotExist()
-        ref = TopicUserRef()
+        ref = UserTopicRef.objects(topic_id=id,
+                user_id=g.user_id).first()
+        if ref:
+            return t.pack()
+        ref = UserTopicRef()
         ref.topic_id = id
         ref.user_id = g.user_id
-        ref.action = TopicUserRef.JOIN
+        ref.action = UserTopicRef.JOIN
         ref.save()
-        return ref.pack()
+
+        t.joined_count += 1
+        t.save()
+        return t.pack(user_id=g.user_id)
 
     @login_required
     def delete(self, id):
         t = Topic.objects(id=ObjectId(id)).first()
         if not t:
             raise ResourceDoesNotExist()
-        ref = TopicUserRef.objects(topic_id=id,
+        ref = UserTopicRef.objects(topic_id=id,
                 user_id=g.user_id).first()
         if ref:
+            t.joined_count -= 1
+            t.save()
             ref.delete()
         
-        return ref.pack()
+        return t.pack(user_id=g.user_id)
