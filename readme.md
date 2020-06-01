@@ -1,6 +1,7 @@
 ### instance api
 
 - 哩嗑 App 接口代码
+- 一个用来练习的小项目
 - Flask + Flask_Restful + mongoengine
 - 线上地址：https://ins-api.sleen.top
 - 文档[Wiki](https://github.com/xiusl/instance/wiki)
