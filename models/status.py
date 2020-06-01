@@ -125,7 +125,7 @@ class Topic(Document):
         user_id = str(user_id)
         return user_id and user_id in self.joiners
 
-    def pack(self, user_id=None, with_user=False):
+    def pack(self, user_id=None, with_user=True):
         datums = {}
 
         if with_user:
