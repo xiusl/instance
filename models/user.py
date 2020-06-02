@@ -236,3 +236,31 @@ class UserTopicRef(Document):
     action = StringField()
     created_at = DateTimeField(default=datetime.datetime.utcnow)
 
+
+class WxUser(Document):
+    meta = {
+        'db_alias': DB_NAME
+    }
+
+    id = ObjectIdField(primary_key=True, default=ObjectId)
+    openid = StringField()
+    unionid = StringField()
+    user_id = ObjectIdField()
+    session_key = StringField()
+    created_at = DateTimeField(default=datetime.datetime.utcnow)
+
+
+    def pack(self):
+        datums = {}
+        datums['id'] = str(self.id)
+        datums['openid'] = self.openid
+
+        datums['binded'] = False
+        if self.user_id:
+            u = User.objects(id=self.user_id).first()
+            if u:
+                datums['binded'] = True
+                datums['user'] = u.pack()
+
+        return datums
+

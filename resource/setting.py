@@ -6,6 +6,7 @@ import requests
 from flask import request
 from flask_restful import reqparse, Resource
 from instance.utils import cos_client, login_required
+from instance.models import WxUser
 from qiniu import Auth
 import settings
 
@@ -116,8 +117,17 @@ class SettingWxMiniRes(Resource):
             url = 'https://api.weixin.qq.com/sns/jscode2session?appid={}&secret={}&js_code={}&grant_type=authorization_code'.format(appid, secret, code)
             resp = requests.get(url)
             data = resp.json()
+            
             print(data)
-            return {'txt': '123'}
+            openid = data.get('openid')
+            
+            wu = WxUser.objects(openid=openid).first()
+            if not wu:
+                wu = WxUser()
+                wu.openid = openid
+                wu.save()
+
+            return wu.pack() 
 
 
         enc_data = args.get('enc_data')
