@@ -47,6 +47,9 @@ from instance.resource import (
     TopicUsersRes,
     UserTopicJoinsRes,
     UserTopicsRes,
+    TagsRes,
+    TagRes,
+    ArticleTagsRes
 )
 from instance.errors import ApiBaseError, ResourceDoesNotExist, MissingRequiredParameter
 
@@ -163,6 +166,9 @@ api.add_resource(TopicStatusesRes, '/topics/<id>/statuses')
 api.add_resource(TopicUsersRes, '/topics/<id>/users')
 api.add_resource(UserTopicsRes, '/users/<id>/topics')
 api.add_resource(UserTopicJoinsRes, '/users/<id>/topics/joins')
+api.add_resource(TagsRes, '/tags')
+api.add_resource(TagRes, '/tags/<id>')
+api.add_resource(ArticleTagsRes, '/articles/<id>/tags')
 
 if __name__ == '__main__':
 #    app.run(debug=True)

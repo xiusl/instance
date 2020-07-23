@@ -6,7 +6,7 @@ import json
 from flask import g, current_app
 from flask_restful import reqparse, Resource
 from bson import ObjectId
-from instance.models import Article, SpArtSmp, Source
+from instance.models import Article, Tag, SpArtSmp, Source
 from instance.utils import login_required, query_paging 
 from instance.errors import (
     BadRequestError, 
@@ -179,3 +179,64 @@ class SpiderArtsRes(Resource):
         return {"count":total, "articles":[art.pack() for art in arts]}
 
 
+class TagsRes(Resource):
+
+    def get(self):
+        args = parser.parse_args()
+        page = int(args.get('page') or 1)
+        count = int(args.get('count') or 10)
+
+        skip = (page - 1)*count
+        qs = Tag.objects()
+        tags = list(qs.skip(skip).limit(count))
+        total = qs.count()
+        return {'count': total, 'tags': [tag.pack() for tag in tags]}
+
+    @login_required
+    def post(self):
+        args = parser.parse_args()
+        name = args.get('name')
+
+        tag = Tag()
+        tag.name = name
+        tag.user_id = g.user_id
+        tag.save()
+
+        return tag.pack()
+
+class TagRes(Resource):
+
+    def get(self, id):
+        tag = Tag.objects(id=ObjectId(id)).first()
+
+        return tag.pack()
+
+    @login_required
+    def delete(self, id):
+        tag = Tag.objects(id=ObjectId(id)).first()
+
+        if not tag:
+            raise ResourceDoesNotExist()
+
+        tag.delete()
+        
+        return tag.pack()
+
+
+class ArticleTagsRes(Resource):
+
+    @login_required
+    def post(self, id):
+        art = Article.objects(id=ObjectId(id)).first()
+
+        if not art:
+            raise ResourceDoesNotExist()
+
+        args = parser.parse_args()
+
+        name = args.get('name')
+
+        art.tag = name
+        art.save()
+
+        return art.pack(g_user=g.user_id)

@@ -38,6 +38,7 @@ class Article(Document):
     status = IntField(default=0)
     spider = IntField(default=0)
     user_id = ObjectIdField()
+    tag = StringField()
 
 
     def save(self, *args, **kwargs):
@@ -72,6 +73,8 @@ class Article(Document):
         data['user'] = u.pack(user_id=g_user)
         
         data['images'] = list([im + img_crop for im in self.images])
+
+        data['tag'] = self.tag or ''
 
         return data 
 
@@ -139,4 +142,27 @@ class SpArtSmp(Document):
             'user_name': self.user_name
         }
         return d
+
+
+class Tag(Document):
+    meta = {
+        'db_alias': 'instance_db'
+    }
+
+    id = ObjectIdField(primary_key=True, default=ObjectId)
+    name = StringField()
+    user_id = ObjectIdField()
+    created_at = DateTimeField(default=datetime.datetime.utcnow)
+    status = IntField(default=0)
+    level = IntField(default=0)
+
+
+    def pack(self):
+
+        datums = {}
+
+        datums['id'] = str(self.id)
+        datums['name'] = self.name
+
+        return datums
 
