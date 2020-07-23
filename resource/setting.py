@@ -36,7 +36,7 @@ class SettingPingRes(Resource):
 
     @login_required
     def get(self):
-        return {'ok': 1}
+        return {'ok': 1, 'user_id': str(g.user_id)}
 
 
 class QiniuTokenRes(Resource):
