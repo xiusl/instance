@@ -3,7 +3,7 @@
 
 import hashlib
 import requests
-from flask import request
+from flask import request, g
 from flask_restful import reqparse, Resource
 from instance.utils import cos_client, login_required
 from instance.models import WxUser
