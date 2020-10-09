@@ -93,7 +93,10 @@ class UsersRes(Resource):
         qs = User.objects()
         total = qs.count()
         us = qs.skip(page*count-count).limit(count)
-        return {"count":total, "users":[u.pack(user_id=g.user_id) for u in us]}
+        simple = True
+        if g.user and g.user.type == 9:
+            simple = False
+        return {"count":total, "users":[u.pack(user_id=g.user_id,simple=simple) for u in us]}
     
 
     def post(self):
