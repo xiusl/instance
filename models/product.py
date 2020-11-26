@@ -19,7 +19,7 @@ class Product(DynamicDocument):
         'db_alias': 'potato_db'
     }
     
-    id = ObjectIdField(primary_key=True, default=ObjcetId)
+    id = ObjectIdField(primary_key=True, default=ObjectId)
     name = StringField()
     desc = StringField()
     icon = StringField()
@@ -42,12 +42,14 @@ class ProVersion(DynamicDocument):
         'db_alias': 'potato_db'
     }
 
-    id = ObjectIdField(primary_key=True, default=ObjcetId)
+    id = ObjectIdField(primary_key=True, default=ObjectId)
     name = StringField()
     desc = StringField()
     code = StringField()
     build_code = StringField()
     app_url = StringField()
+    type = StringField()
+    product_id = ObjectIdField()
     manifest_url = StringField()
     created_at = DateTimeField(default=datetime.datetime.utcnow)
 

@@ -15,3 +15,5 @@ qiniu
 tencentcloud-sdk-python
 
 aiosmtplib
+
+qingstor-sdk
