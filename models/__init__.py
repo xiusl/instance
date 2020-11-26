@@ -7,3 +7,5 @@ from .article import *
 from .poem import *
 from .feedback import *
 from .apilog import *
+from .product import *
+
