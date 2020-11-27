@@ -82,3 +82,11 @@ class ProductVersionsRes(Resource):
         pv.product_id = p.id
         pv.save()
         return pv.pack()
+
+class VersionRes(Resource):
+
+    def get(self, id):
+        v = ProVersion.objects(id=ObjectId(id)).first()
+        if not v:
+            raise ResourceDoesNotExist
+        return v.pack()

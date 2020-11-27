@@ -53,6 +53,7 @@ from instance.resource import (
     ArticleTagsRes,
     ProductsRes,
     ProductRes,
+    VersionRes,
     ProductVersionsRes
 )
 from instance.errors import ApiBaseError, ResourceDoesNotExist, MissingRequiredParameter
@@ -177,6 +178,7 @@ api.add_resource(ArticleTagsRes, '/articles/<id>/tags')
 api.add_resource(ProductsRes, '/products')
 api.add_resource(ProductRes, '/products/<id>')
 api.add_resource(ProductVersionsRes, '/products/<id>/versions')
+api.add_resource(VersionRes, '/versions/<id>')
 
 if __name__ == '__main__':
 #    app.run(debug=True)

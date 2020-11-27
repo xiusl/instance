@@ -63,6 +63,8 @@ class ProVersion(DynamicDocument):
         datums['build_code'] = self.build_code
         datums['app_url'] = self.app_url
         datums['manifest_url'] = self.manifest_url
+        datums['created_at'] = self.created_at.isoformat()
+        datums['ios_down_url'] = 'itms-services://?action=download-manifest&url=' + str(self.manifest_url)
         
         return datums
 
