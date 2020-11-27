@@ -21,6 +21,8 @@ from tencentcloud.sms.v20190711 import sms_client, models
 from instance import settings
 from instance.errors import LoginRequiredError, OperationForbiddenError
 
+from qingstor.sdk.config import Config as QingConfig
+from qingstor.sdk.request import Request as QingRequest
 
 def login_required(func):
     @wraps(func)
@@ -206,6 +208,38 @@ cos_config = CosConfig(Region='ap-beijing',
         SecretKey=settings.COS_SECRET_KEY, Token=None)
 cos_client = CosS3Client(cos_config)
 
+print(settings.QING_KEY)
+qing_config = QingConfig(settings.QING_KEY, settings.QING_SECERT)
+
+
+def _qing_get_properties(data):
+    """ Get properties from data
+    :param data: the request data to be authorized
+    :return: properties: request properties
+    """
+    properties = {}
+    url = data['url'].split('/')
+    if len(url) == 2 and url[1]:
+        properties['bucket-name'] = url[1]
+    if len(url) > 2 and url[2]:
+        properties['object-key'] = url[2].split('?')[0]
+    return properties
+
+def qing_get_auth(data):
+    """ Get signature with specific operation
+    :param data: the request data to be authorized
+    :return: signature: authorized string
+    """
+    operation = {
+        'Headers': data.get('headers', {}),
+        'Method': data['method'],
+        'Params': data.get('params', {}),
+        'Properties': _qing_get_properties(data),
+        'URI': data['url'],
+    }
+    signature = QingRequest(qing_config, operation).get_authorization()
+    authorization = "QS %s:%s" % (settings.QING_KEY, signature)
+    return authorization
 
 def query_paging(qs, cursor, direction, count):
     if direction > 0 and cursor:

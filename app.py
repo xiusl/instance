@@ -36,6 +36,7 @@ from instance.resource import (
     PoemTagsRes,
     SpiderArticleRes,
     QiniuTokenRes,
+    QingAuthRes,
     FeedbackRes,
     FeedbacksRes,
     UserFeedbackRes,
@@ -158,6 +159,7 @@ api.add_resource(PoemAuthorsRes, '/p/authors')
 api.add_resource(PoemsRes, '/p/poems')
 api.add_resource(PoemTagsRes, '/p/tags')
 api.add_resource(QiniuTokenRes, '/qiniu/token')
+api.add_resource(QingAuthRes, '/qing/token')
 api.add_resource(FeedbackRes, '/feedbacks/<id>')
 api.add_resource(FeedbacksRes, '/feedbacks')
 api.add_resource(UserFeedbackRes, '/users/<id>/feedbacks')

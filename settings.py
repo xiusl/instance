@@ -46,3 +46,6 @@ WX_MINI_SECRET = os.getenv('WX_MINI_SECRET') or ''
 QINIU_ACCESS = os.getenv('QINIU_ACCESS')
 QINIU_SECRET = os.getenv('QINIU_SECRET')
 
+
+QING_KEY = os.getenv('QING_KEY')
+QING_SECERT = os.getenv('QING_SECERT')

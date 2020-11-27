@@ -5,7 +5,7 @@ import hashlib
 import requests
 from flask import request, g
 from flask_restful import reqparse, Resource
-from instance.utils import cos_client, login_required
+from instance.utils import cos_client, login_required, qing_get_auth
 from instance.models import WxUser
 from qiniu import Auth
 import settings
@@ -52,6 +52,14 @@ class QiniuTokenRes(Resource):
         }
         token = q.upload_token(bucket_name, None, 3600, policy)
         return token
+
+class QingAuthRes(Resource):
+
+    def post(self):
+        j = request.json
+        if not j:
+            return ""
+        return qing_get_auth(j)
 
 _args2 = ['signature', 'timestamp', 'msg_signature', 'nonce', 'echostr']
 for _arg2 in _args2:
