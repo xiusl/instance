@@ -68,7 +68,7 @@ class ProductVersionsRes(Resource):
         code = args.get('code')
         if not code:
             raise MissingRequiredParameter(['code'])
-        build = args.get('build_code')
+        build = args.get('build')
         app_url = args.get('app_url')
         if not app_url:
             raise MissingRequiredParameter(['app_url'])

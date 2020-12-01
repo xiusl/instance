@@ -219,7 +219,7 @@ def _qing_get_properties(data):
     """
     properties = {}
     url = data['url'].split('/')
-    if len(url) == 2 and url[1]:
+    if len(url) > 2 and url[1]:
         properties['bucket-name'] = url[1]
     if len(url) > 2 and url[2]:
         properties['object-key'] = url[2].split('?')[0]
@@ -237,6 +237,7 @@ def qing_get_auth(data):
         'Properties': _qing_get_properties(data),
         'URI': data['url'],
     }
+    print(operation)
     signature = QingRequest(qing_config, operation).get_authorization()
     authorization = "QS %s:%s" % (settings.QING_KEY, signature)
     return authorization
