@@ -28,6 +28,7 @@ class ProductsRes(Resource):
         return {'products': [p.pack() for p in products]}
 
 
+    @login_required
     def post(self):
         args = parser.parse_args()
         name = args.get('name')
@@ -57,6 +58,7 @@ class ProductVersionsRes(Resource):
         vs = ProVersion.objects(product_id=ObjectId(id))
         return [v.pack() for v in vs]
 
+    @login_required
     def post(self, id):
         p = Product.objects(id=ObjectId(id)).first()
         if not p:

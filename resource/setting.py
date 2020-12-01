@@ -55,6 +55,7 @@ class QiniuTokenRes(Resource):
 
 class QingAuthRes(Resource):
 
+    @login_required
     def post(self):
         j = request.json
         if not j:
