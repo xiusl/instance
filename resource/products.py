@@ -92,3 +92,13 @@ class VersionRes(Resource):
         if not v:
             raise ResourceDoesNotExist
         return v.pack()
+
+
+class VersionsRes(Resource):
+
+    def get(self):
+        args = parser.parse_args()
+        name = args.get('name')
+        code = args.get('code')
+        build = args.get('build')
+        return ""

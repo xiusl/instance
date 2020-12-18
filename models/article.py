@@ -72,7 +72,9 @@ class Article(Document):
         data['is_spider'] = self.spider
         data['user'] = u.pack(user_id=g_user)
         
-        data['images'] = list([im + img_crop for im in self.images])
+        images = self.images
+        images = self.images[:2] if len(images) > 1 else []
+        data['images'] = list([im + img_crop for im in images])
 
         data['tag'] = self.tag or ''
 
