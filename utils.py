@@ -93,6 +93,7 @@ def send_sms_v2(to, content):
     appid = settings.SMS_TENC_ID
     appkey = settings.SMS_TENC_KEY
     ssender = SmsSingleSender(appid, appkey)
+    print(ssender)
     sms_type = 0
     try:
         result = ssender.send(sms_type,
@@ -102,6 +103,7 @@ def send_sms_v2(to, content):
                 extend='',
                 ext='')
     except Exception as e:
+        print("send sms error")
         print(e)
         return False
     code = int(result.get('result', -1))
@@ -111,8 +113,8 @@ def send_sms_v2(to, content):
 
 def send_sms_v3(to, content):
     try:
-        appid = settings.SMS_TENC_ID
-        appkey = settings.SMS_TENC_KEY
+        appid = settings.COS_SECRET_ID
+        appkey = settings.COS_SECRET_KEY
         cred = credential.Credential(appid, appkey)
         httpProfile = HttpProfile()
         httpProfile.endpoint = "sms.tencentcloudapi.com"
@@ -123,15 +125,20 @@ def send_sms_v3(to, content):
 
         req = models.SendSmsRequest()
         p = {
-            'PhoneNumberSet': to,
+            'PhoneNumberSet': [to],
             'TemplateParamSet': [content],
-            'TemplateID': '277951',
-            'SmsSdkAppid': '1400208313'
+            'TemplateID': '336656',
+            'SmsSdkAppid': '1400208313',
+            'Sign': '哩嗑APP'
         }
         req.from_json_string(json.dumps(p))
         resp = client.SendSms(req)
-        print(resp)
-        print(resp.to_json_string())
+        resp = resp.to_json_string()
+        resp = json.loads(resp)
+        res = resp.get('SendStatusSet')
+        if res[0].get('Code') != 'OK':
+            print("send sms error %s" % res[0].get('Code'))
+            return False
         return True
 
     except TencentCloudSDKException as err:
@@ -140,7 +147,9 @@ def send_sms_v3(to, content):
 
 def send_sms_code(to, code):
     content = '【哩嗑APP】验证码%s，如非本人操作请忽略。' % code
-    return send_sms_v2(to, content)
+    if len(to) == 11:
+        to = "86" + to
+    return send_sms_v3(to, code)
 
 
 def send_email(to, subject, content):
