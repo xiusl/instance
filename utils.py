@@ -136,10 +136,12 @@ def send_sms_v3(to, content):
         resp = resp.to_json_string()
         resp = json.loads(resp)
         res = resp.get('SendStatusSet')
-        if res[0].get('Code') != 'OK':
-            print("send sms error %s" % res[0].get('Code'))
-            return False
-        return True
+        code = res[0].get('Code')
+        if code == 'Ok':
+            return True
+        
+        print("send sms error %s" % code)
+        return False
 
     except TencentCloudSDKException as err:
         print(err)
