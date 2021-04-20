@@ -129,6 +129,8 @@ def teardown_request(e):
 def handle_app_error(error):
     if app.config['DEBUG']:
         raise error
+    if error.code == 404:
+        return output_json('', error.code, error="endpoint not found")
     return output_json('', 500, error=str(error))
 
 @app.errorhandler(ApiBaseError)
@@ -182,7 +184,7 @@ api.add_resource(VersionRes, '/versions/<id>')
 
 if __name__ == '__main__':
 #    app.run(debug=True)
-    app.run(debug=True, host="127.0.0.1", port=5051)
+    app.run(debug=False, host="127.0.0.1", port=5051)
 
 
 if __name__ != '__main__':
