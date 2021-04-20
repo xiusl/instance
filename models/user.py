@@ -45,6 +45,7 @@ class User(Document):
     status = IntField(default=0)
     followed_count = IntField(default=0)
     following_count = IntField(default=0)
+    im_token = StringField()
 
     def save(self, *args, **kwargs):
         if self.password and \
@@ -158,6 +159,7 @@ class User(Document):
 
         if with_token:
             dutam['token'] = self.get_token()
+            dutam['im_token'] = self.im_token
         return dutam
 
 

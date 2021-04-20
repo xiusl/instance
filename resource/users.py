@@ -15,6 +15,7 @@ from instance.errors import (
     ForbidenError
 )
 from instance.utils import send_sms_code, send_email_code, login_required
+from instance.im163 import refreshIMToken, updateIMUserInfo
 from instance.models import User, Topic, UserTopicRef, UserRelation, UserAction, Status, VerifyCode
 
 parser = reqparse.RequestParser()
@@ -68,6 +69,7 @@ class UserRes(Resource):
         name = args.get('name')
         if name:
             user.name = name
+        updateIMUserInfo(str(user.id), name, avatar)
         desc = args.get('desc')
         if desc:
             user.desc = desc
@@ -242,6 +244,11 @@ class Authorizations(Resource):
         u = User.objects(id=ObjectId(user_id)).first()
         if not u:
             raise ResourceDoesNotExist()
+        if not u.im_token or len(u.im_token) == 0:
+            ok, im_token = refreshIMToken(user_id)
+            if ok:
+                u.im_token = im_token
+                u.save()
         return u.pack(with_token=True, simple=False)
 
 class VerifyCodes(Resource):

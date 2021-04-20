@@ -7,6 +7,7 @@ from flask import request, g
 from flask_restful import reqparse, Resource
 from instance.utils import cos_client, login_required, qing_get_auth
 from instance.models import WxUser
+from instance.im163 import registIMUser 
 from qiniu import Auth
 import settings
 
@@ -30,12 +31,20 @@ class SettingsRes(Resource):
             Key = '/',
             Expired = 3600
         )
+
+
         return resp
 
 class SettingPingRes(Resource):
 
     @login_required
     def get(self):
+        # old user register im server
+        u = g.user
+        ok, im_token = registIMUser(str(g.user_id), u.name, u.avatar)
+        if ok:
+            u.im_token = im_token
+            u.save()
         return {'ok': 1, 'user_id': str(g.user_id)}
 
 

@@ -97,6 +97,7 @@ def before_request():
         g.user = u
         g.user_id = u.id if u else None
         g.user_type = u.type if u else 0
+        print(id(g), str(u.id))
 
     source = request.headers.get("X-Type") or "web"
     g.source = source 
@@ -184,7 +185,7 @@ api.add_resource(VersionRes, '/versions/<id>')
 
 if __name__ == '__main__':
 #    app.run(debug=True)
-    app.run(debug=False, host="127.0.0.1", port=5051)
+    app.run(debug=True, host="127.0.0.1", port=5051)
 
 
 if __name__ != '__main__':
