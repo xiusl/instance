@@ -54,6 +54,7 @@ from instance.resource import (
     ProductsRes,
     ProductRes,
     VersionRes,
+    IMChatRoomsRes,
     ProductVersionsRes
 )
 from instance.errors import ApiBaseError, ResourceDoesNotExist, MissingRequiredParameter
@@ -182,6 +183,7 @@ api.add_resource(ProductsRes, '/products')
 api.add_resource(ProductRes, '/products/<id>')
 api.add_resource(ProductVersionsRes, '/products/<id>/versions')
 api.add_resource(VersionRes, '/versions/<id>')
+api.add_resource(IMChatRoomsRes, '/im/chatrooms')
 
 if __name__ == '__main__':
 #    app.run(debug=True)

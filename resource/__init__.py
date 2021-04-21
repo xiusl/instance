@@ -9,3 +9,4 @@ from .poem import *
 from .feedback import *
 from .apilog import *
 from .products import *
+from .im import *

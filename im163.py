@@ -52,7 +52,6 @@ def updateIMUserInfo(user_id, name=None, avatar=None):
             data['icon'] = 'https://image.sleen.top/' + avatar
         else:
             data['icon'] = avatar
-    print(data)
     resp = requests.post(url, headers=headers, data=data)
     data = resp.json()
     code = data.get('code')
@@ -61,6 +60,18 @@ def updateIMUserInfo(user_id, name=None, avatar=None):
         return True
     print("update im user info error")
     return True
+
+def createIMChatRoom(user_id, room_name):
+    url = 'https://api.netease.im/nimserver/chatroom/create.action'
+    headers = createIMHeader()
+    data = {"creator": user_id, "name": room_name}
+    resp = requests.post(url, headers=headers, data=data)
+    data = resp.json()
+    code = data.get('code')
+    if code == 200:
+        return True, data.get('chatroom').get('roomid')
+    print(data)
+    return False, "crate room error"
 
 def createIMHeader():
     app_key = settings.IM163_APP_KEY

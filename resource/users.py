@@ -3,7 +3,7 @@
 
 import datetime
 from bson import ObjectId
-from flask import g
+from flask import g, current_app
 from flask_restful import reqparse, Resource
 from instance.errors import (
     BadRequestError, 
@@ -15,7 +15,7 @@ from instance.errors import (
     ForbidenError
 )
 from instance.utils import send_sms_code, send_email_code, login_required
-from instance.im163 import refreshIMToken, updateIMUserInfo
+from instance.im163 import refreshIMToken, registIMUser, updateIMUserInfo
 from instance.models import User, Topic, UserTopicRef, UserRelation, UserAction, Status, VerifyCode
 
 parser = reqparse.RequestParser()
@@ -118,6 +118,7 @@ class UsersRes(Resource):
             user.phone = phone
             user.password = 'Asd110#.'
             user.save()
+            registIMUser(str(user.id), user.name, user.avatar)
         return user.pack(with_token=True, simple=False)
 
 
@@ -236,6 +237,7 @@ class Authorizations(Resource):
             user.phone = phone
             user.password = 'Asd110#.'
             user.save()
+            registIMUser(str(user.id), user.name, user.avatar)
         return user.pack(with_token=True, simple=False)
 
     @login_required
@@ -264,7 +266,7 @@ class VerifyCodes(Resource):
             raise MissingRequiredParameter(['phone or email'])
         vc = VerifyCode.create(key)
         if '@' not in key: # is phone
-            if key == '17600101706':
+            if current_app.config['DEBUG']:
                 print(vc.code)
                 return {'ok': 1}
             ok = send_sms_code(key, vc.code)
