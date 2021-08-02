@@ -105,7 +105,6 @@ class StatusRes(Resource):
         s = Status.objects(id=ObjectId(id)).first()
         if not s:
             raise ResourceDoesNotExist()
-        print(g.user.is_admin)
         if str(s.user_id) != str(g.user_id) and not g.user.is_admin:
             raise OperationForbiddenError()
         s.status = -2

@@ -19,7 +19,6 @@ def registIMUser(user_id, name=None, avatar=None):
     resp = requests.post(url, headers=headers, data=data)
 
     data = resp.json()
-    print(data)
     code = data.get('code')
     if code == 200:
         return True, data.get('info').get('token')
@@ -34,7 +33,6 @@ def refreshIMToken(user_id):
     resp = requests.post(url, headers=headers, data=data)
     data = resp.json()
     code = data.get('code')
-    print('刷新im令牌', resp)
     if code == 200:
         return True, data.get('info').get('token')
     return False, data.get('desc')
@@ -56,9 +54,7 @@ def updateIMUserInfo(user_id, name=None, avatar=None):
     data = resp.json()
     code = data.get('code')
     if code == 200:
-        print("update im user info ok")
         return True
-    print("update im user info error")
     return True
 
 def createIMChatRoom(user_id, room_name):
@@ -70,7 +66,6 @@ def createIMChatRoom(user_id, room_name):
     code = data.get('code')
     if code == 200:
         return True, data.get('chatroom').get('roomid')
-    print(data)
     return False, "crate room error"
 
 def createIMHeader():

@@ -11,7 +11,6 @@ def fix_poem():
     data = au.find()
 
     for d in data:
-        print(d.get('id'))
         idd = d.get('_id')
         au.update_one({'_id': idd},{'$rename':{'id': 'o_id'}})
 
@@ -19,7 +18,6 @@ def fix_rel():
     db = pymongo.MongoClient('mongodb://127.0.0.1:27017/poem_db')
     p_col = db['poem_db'].poem_a
     a_col = db['poem_db'].author_a
-    print(a_col)
     f_id = '5dd225268c47d441b6f25c97'
     data = p_col.find({'_id': {'$gt':ObjectId(f_id)}})
 

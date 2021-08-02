@@ -92,7 +92,6 @@ class User(Document):
 
     def is_followed(self, user_id):
         u_id = ObjectId(user_id)
-        print(u_id)
         return u_id and u_id in self.followers
 
     def follow(self, user_id):

@@ -109,7 +109,6 @@ class SpiderArticlesRes(Resource):
         a.save()
         art_id = args.get('art_id')
         art = ArticleTmp.objects(id=ObjectId(art_id)).first()
-        print('user_id' + u_id + ' art_id: ', art_id)
         if art:
             art.status = 1
             art.a_id = a.id

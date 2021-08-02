@@ -267,7 +267,6 @@ class VerifyCodes(Resource):
         vc = VerifyCode.create(key)
         if '@' not in key: # is phone
             if current_app.config['DEBUG']:
-                print(vc.code)
                 return {'ok': 1}
             ok = send_sms_code(key, vc.code)
             if not ok:

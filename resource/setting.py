@@ -135,8 +135,6 @@ class SettingWxMiniRes(Resource):
             url = 'https://api.weixin.qq.com/sns/jscode2session?appid={}&secret={}&js_code={}&grant_type=authorization_code'.format(appid, secret, code)
             resp = requests.get(url)
             data = resp.json()
-            
-            print(data)
             openid = data.get('openid')
             
             wu = WxUser.objects(openid=openid).first()
@@ -155,7 +153,5 @@ class SettingWxMiniRes(Resource):
         iv = args.get('iv')
 
         pc = WXBizDataCrypt(appId, sessionKey)
-        
-        print(pc.decrypt(encryptedData, iv))
         return {'txt': '12'}
 

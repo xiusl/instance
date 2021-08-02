@@ -98,7 +98,6 @@ def send_sms_v2(to, content):
     appid = settings.SMS_TENC_ID
     appkey = settings.SMS_TENC_KEY
     ssender = SmsSingleSender(appid, appkey)
-    print(ssender)
     sms_type = 0
     try:
         result = ssender.send(sms_type,
@@ -108,8 +107,6 @@ def send_sms_v2(to, content):
                 extend='',
                 ext='')
     except Exception as e:
-        print("send sms error")
-        print(e)
         return False
     code = int(result.get('result', -1))
     if code != 0:
@@ -145,11 +142,9 @@ def send_sms_v3(to, content):
         if code == 'Ok':
             return True
         
-        print("send sms error %s" % code)
         return False
 
     except TencentCloudSDKException as err:
-        print(err)
         return False
 
 def send_sms_code(to, code):
@@ -171,7 +166,6 @@ def send_email(to, subject, content):
         smtp.sendmail(settings.EMAIL_ADMIN, to, msg.as_string())
         smtp.close()
     except Exception as e:
-        print(e)
         return False
     return True
 
@@ -193,7 +187,6 @@ async def send_email_async(to, subject, content):
             use_tls=True
         )
     except Exception as e:
-        print(e)
         return False
 
 def send_email_msg2(msg):
@@ -223,8 +216,6 @@ cos_config = CosConfig(Region='ap-beijing',
         SecretId=settings.COS_SECRET_ID, 
         SecretKey=settings.COS_SECRET_KEY, Token=None)
 cos_client = CosS3Client(cos_config)
-
-print(settings.QING_KEY)
 qing_config = QingConfig(settings.QING_KEY, settings.QING_SECERT)
 
 
@@ -253,7 +244,6 @@ def qing_get_auth(data):
         'Properties': _qing_get_properties(data),
         'URI': data['url'],
     }
-    print(operation)
     signature = QingRequest(qing_config, operation).get_authorization()
     authorization = "QS %s:%s" % (settings.QING_KEY, signature)
     return authorization

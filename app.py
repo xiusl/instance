@@ -62,7 +62,6 @@ def before_request():
         g.user = u
         g.user_id = u.id if u else None
         g.user_type = u.type if u else 0
-        print(id(g), str(u.id))
 
     source = request.headers.get("X-Type") or "web"
     g.source = source 
