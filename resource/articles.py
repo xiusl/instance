@@ -9,7 +9,7 @@ from flask import g, current_app
 from flask_restful import reqparse, Resource
 from bson import ObjectId
 from instance.models import Article, Tag, SpArtSmp, Source, ArticleTmp
-from instance.utils import login_required, md5_url, query_paging 
+from instance.utils import login_required, md5_url, query_paging, commitSpiderTask
 from instance.errors import (
     BadRequestError, 
     ResourceDoesNotExist,
@@ -118,6 +118,16 @@ class SpiderArticlesRes(Resource):
 
         return article
 
+    def get(self):
+        args = parser.parse_args()
+        url = args.get('url')
+        m5url = md5_url(url)
+        art = ArticleTmp.objects(hashed=m5url).first()
+        if art and art.status == 1:
+            # 已存在，并抓取成功
+            return {'ok': 2, 'article_id': str(art.a_id)}
+        return {'ok': 0}
+
 loop = asyncio.get_event_loop()
 
 
@@ -139,40 +149,8 @@ class SpiderRes(Resource):
             art.u_id = g.user_id
             art.save()
         data = {'url': url, 'user_id': str(g.user_id), 'art_id': str(art.id)}
-        loop.run_until_complete(self._commitTask(data))
+        loop.run_until_complete(commitSpiderTask(data))
         return {'ok':1}
-
-
-class ArticleSpiderRes(Resource):
-
-    @login_required
-    def post(self):
-        args = parser.parse_args()
-        url = args.get('url')
-        m5url = md5_url(url)
-        art = ArticleTmp.objects(hashed=m5url).first()
-        if art and art.status == 1:
-            # 已存在，并抓取成功
-            return {'ok': 2, 'article_id': str(art.a_id)}
-        if art is None:
-            art = ArticleTmp()
-            art.hashed = m5url
-            art.url = url
-            art.u_id = g.user_id
-            art.save()
-        data = {'url': url, 'user_id': str(g.user_id), 'art_id': str(art.id)}
-        loop.run_until_complete(self._commitTask(data))
-        return {'ok':1}
-
-    async def _commitTask(self, data):
-        session = requests.session()
-        headers = {'Content-Type':'application/json'}
-        url = 'http://192.144.171.238/spider'
-        if current_app.config['DEBUG']:
-            url = 'http://127.0.0.1:5001/spider'
-        res = session.post(url, json=data, headers=headers, verify=False)
-
-
 
     def get(self):
         args = parser.parse_args()
@@ -219,19 +197,6 @@ class SourcesRes(Resource):
         s.type = type
         s.save()
         return s.pack()
-
-
-class SpiderArtsRes(Resource):
-
-    def get(self):
-        args = parser.parse_args()
-        page = int(args.get('page') or 1)
-        count = int(args.get('count') or 10)
-        skip = (page - 1)*count
-        qs = SpArtSmp.objects()
-        arts = list(qs.skip(skip).limit(count))
-        total = qs.count()
-        return {"count":total, "articles":[art.pack() for art in arts]}
 
 
 class TagsRes(Resource):

@@ -265,6 +265,14 @@ def query_paging(qs, cursor, direction, count):
         objs = []
     return objs
 
+async def commitSpiderTask(data):
+    session = requests.session()
+    headers = {'Content-Type':'application/json'}
+    url = 'http://192.144.171.238/spider'
+    if current_app.config['DEBUG']:
+        url = 'http://127.0.0.1:5001/spider'
+    res = session.post(url, json=data, headers=headers, verify=False)
+
 
 if __name__ == '__main__':
     send_email_msg2('123')

@@ -4,7 +4,6 @@
 
 from instance.maps import mapping
 from instance.resource import (
-    ArticleSpiderRes,
     ArticlesRes,
     ArticleRes,
     ArticleTagsRes,
@@ -12,7 +11,6 @@ from instance.resource import (
     SourcesRes,
 
     SpiderRes,
-    SpiderArtsRes,
     SpiderArticlesRes,
 
     TagsRes,
@@ -24,7 +22,6 @@ art_prefix = '/articles'
 art_map = {
     ArticlesRes: '',
     ArticleRes: '/<id>',
-    ArticleSpiderRes: 'spider'
 }
 
 # 来源
