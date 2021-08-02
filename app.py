@@ -10,54 +10,18 @@ from flask_cors import CORS
 import settings
 from instance.models import User, ApiLog
 from instance.utils import output_json, cos_client
-from instance.resource import (
-    StatusesRes, 
-    StatusRes, 
-    Authorizations, 
-    UsersRes, 
-    UserRes,
-    VerifyCodes, 
-    UserFollowers,
-    UserFolloweds,
-    UserStatusesRes,
-    StatusLikesRes,
-    UserStatusLikesRes,
-    UserPasswordRes,
-    ArticleSpiderRes,
-    ArticlesRes,
-    ArticleRes,
-    SourcesRes,
-    SettingsRes,
-    SettingWxRes,
-    SettingPingRes,
-    SpiderArtsRes,
-    PoemAuthorsRes,
-    PoemsRes,
-    PoemTagsRes,
-    SpiderArticleRes,
-    QiniuTokenRes,
-    QingAuthRes,
-    FeedbackRes,
-    FeedbacksRes,
-    UserFeedbackRes,
-    SettingWxMiniRes,
-    ApiLogRes,
-    StatusShieldsRes,
-    TopicsRes,
-    TopicStatusesRes,
-    TopicUsersRes,
-    UserTopicJoinsRes,
-    UserTopicsRes,
-    TagsRes,
-    TagRes,
-    ArticleTagsRes,
-    ProductsRes,
-    ProductRes,
-    VersionRes,
-    IMChatRoomsRes,
-    ProductVersionsRes
+from instance.maps import (
+    map_user, 
+    map_status, 
+    map_article, 
+    map_poem,
+    map_other,
 )
-from instance.errors import ApiBaseError, ResourceDoesNotExist, MissingRequiredParameter
+from instance.errors import (
+    ApiBaseError, 
+    ResourceDoesNotExist, 
+    MissingRequiredParameter,
+)
 
 class MyApi(Api):
 
@@ -139,55 +103,59 @@ def handle_app_error(error):
 def handle_api_error(error):
     return output_json(error.to_dict(), error.code)
 
-api.add_resource(Authorizations, '/authorizations')
-api.add_resource(UsersRes, '/users')
-api.add_resource(UserRes, '/users/<id>')
-api.add_resource(UserPasswordRes, '/users/<id>/password')
-api.add_resource(VerifyCodes, '/verifycodes')
-api.add_resource(UserFollowers, '/users/<id>/followers')
-api.add_resource(UserFolloweds, '/users/<id>/followeds')
-api.add_resource(StatusesRes, '/statuses')
-api.add_resource(StatusRes, '/statuses/<id>')
-api.add_resource(UserStatusesRes, '/users/<user_id>/statuses')
-api.add_resource(StatusLikesRes, '/statuses/<id>/likes')
-api.add_resource(UserStatusLikesRes, '/users/<id>/likes/statuses')
-api.add_resource(ArticleSpiderRes, '/articles/spider')
-api.add_resource(ArticlesRes, '/articles')
-api.add_resource(ArticleRes, '/articles/<id>')
-api.add_resource(SourcesRes, '/sources')
-api.add_resource(SettingsRes, '/settings')
-api.add_resource(SettingWxRes, '/setting/wx')
-api.add_resource(SettingPingRes, '/setting/ping')
-api.add_resource(SpiderArtsRes, '/spiderarts')
-api.add_resource(SpiderArticleRes, '/spider/article')
-api.add_resource(PoemAuthorsRes, '/p/authors')
-api.add_resource(PoemsRes, '/p/poems')
-api.add_resource(PoemTagsRes, '/p/tags')
-api.add_resource(QiniuTokenRes, '/qiniu/token')
-api.add_resource(QingAuthRes, '/qing/token')
-api.add_resource(FeedbackRes, '/feedbacks/<id>')
-api.add_resource(FeedbacksRes, '/feedbacks')
-api.add_resource(UserFeedbackRes, '/users/<id>/feedbacks')
-api.add_resource(SettingWxMiniRes, '/wx_mini')
-api.add_resource(ApiLogRes, '/logs')
-api.add_resource(StatusShieldsRes, '/statuses/<id>/shield')
-api.add_resource(TopicsRes, '/topics')
-api.add_resource(TopicStatusesRes, '/topics/<id>/statuses')
-api.add_resource(TopicUsersRes, '/topics/<id>/users')
-api.add_resource(UserTopicsRes, '/users/<id>/topics')
-api.add_resource(UserTopicJoinsRes, '/users/<id>/topics/joins')
-api.add_resource(TagsRes, '/tags')
-api.add_resource(TagRes, '/tags/<id>')
-api.add_resource(ArticleTagsRes, '/articles/<id>/tags')
-api.add_resource(ProductsRes, '/products')
-api.add_resource(ProductRes, '/products/<id>')
-api.add_resource(ProductVersionsRes, '/products/<id>/versions')
-api.add_resource(VersionRes, '/versions/<id>')
-api.add_resource(IMChatRoomsRes, '/im/chatrooms')
+
+map_user(api)
+map_status(api)
+map_article(api)
+map_poem(api)
+map_other(api)
+
+#api.add_resource(Authorizations, '/authorizations')
+#api.add_resource(VerifyCodes, '/verifycodes')
+#api.add_resource(UserFollowers, '/users/<id>/followers')
+#api.add_resource(UserFolloweds, '/users/<id>/followeds')
+#api.add_resource(StatusesRes, '/statuses')
+#api.add_resource(StatusRes, '/statuses/<id>')
+#api.add_resource(UserStatusesRes, '/users/<user_id>/statuses')
+#api.add_resource(StatusLikesRes, '/statuses/<id>/likes')
+#api.add_resource(UserStatusLikesRes, '/users/<id>/likes/statuses')
+#api.add_resource(ArticleSpiderRes, '/articles/spider')
+#api.add_resource(ArticlesRes, '/articles')
+#api.add_resource(ArticleRes, '/articles/<id>')
+#api.add_resource(SourcesRes, '/sources')
+#api.add_resource(SettingsRes, '/settings')
+#api.add_resource(SettingWxRes, '/setting/wx')
+#api.add_resource(SettingPingRes, '/setting/ping')
+#api.add_resource(SpiderArtsRes, '/spiderarts')
+#api.add_resource(SpiderArticleRes, '/spider/article')
+#api.add_resource(PoemAuthorsRes, '/p/authors')
+#api.add_resource(PoemsRes, '/p/poems')
+#api.add_resource(PoemTagsRes, '/p/tags')
+#api.add_resource(QiniuTokenRes, '/qiniu/token')
+#api.add_resource(QingAuthRes, '/qing/token')
+#api.add_resource(FeedbackRes, '/feedbacks/<id>')
+#api.add_resource(FeedbacksRes, '/feedbacks')
+#api.add_resource(UserFeedbackRes, '/users/<id>/feedbacks')
+#api.add_resource(SettingWxMiniRes, '/wx_mini')
+#api.add_resource(ApiLogRes, '/logs')
+#api.add_resource(StatusShieldsRes, '/statuses/<id>/shield')
+#api.add_resource(TopicsRes, '/topics')
+#api.add_resource(TopicStatusesRes, '/topics/<id>/statuses')
+#api.add_resource(TopicUsersRes, '/topics/<id>/users')
+#api.add_resource(UserTopicsRes, '/users/<id>/topic
+#api.add_resource(UserTopicJoinsRes, '/users/<id>/topics/joins')
+#api.add_resource(TagsRes, '/tags')
+#api.add_resource(TagRes, '/tags/<id>')
+#api.add_resource(ArticleTagsRes, '/articles/<id>/tags')
+#api.add_resource(ProductsRes, '/products')
+#api.add_resource(ProductRes, '/products/<id>')
+#api.add_resource(ProductVersionsRes, '/products/<id>/versions')
+#api.add_resource(VersionRes, '/versions/<id>')
+#api.add_resource(IMChatRoomsRes, '/im/chatrooms')
 
 if __name__ == '__main__':
 #    app.run(debug=True)
-    app.run(debug=True, host="127.0.0.1", port=5051)
+    app.run(debug=True, host="127.0.0.1", port=5000)
 
 
 if __name__ != '__main__':

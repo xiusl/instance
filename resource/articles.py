@@ -3,11 +3,13 @@
 
 import requests
 import json
+import asyncio
+import datetime
 from flask import g, current_app
 from flask_restful import reqparse, Resource
 from bson import ObjectId
-from instance.models import Article, Tag, SpArtSmp, Source
-from instance.utils import login_required, query_paging 
+from instance.models import Article, Tag, SpArtSmp, Source, ArticleTmp
+from instance.utils import login_required, md5_url, query_paging 
 from instance.errors import (
     BadRequestError, 
     ResourceDoesNotExist,
@@ -20,7 +22,8 @@ _args = ['id', 'url', 'page', 'count', 'type',
          'name', 'identifier', 'avatar',
          'level', 'status', 'trans_text',
          'cursor', 'direction', 'title',
-         'author', 'spider', 'article']
+         'author', 'spider', 'article',
+         'art_id', 'u_id']
 for _arg in _args:
     parser.add_argument(_arg)
 
@@ -91,32 +94,85 @@ class ArticlesRes(Resource):
         return {"count":total, "articles":[art.pack() for art in arts]}
 
 
-class SpiderArticleRes(Resource):
+class SpiderArticlesRes(Resource):
 
     def post(self):
         args = parser.parse_args()
         article = args.get('article')
+        u_id = args.get('u_id')
+
         article = json.loads(article)
         a = Article()
         for key in article.keys():
             setattr(a, key, article.get(key))
+        a.user_id = u_id
         a.save()
+        art_id = args.get('art_id')
+        art = ArticleTmp.objects(id=ObjectId(art_id)).first()
+        print('user_id' + u_id + ' art_id: ', art_id)
+        if art:
+            art.status = 1
+            art.a_id = a.id
+            art.updated_at = datetime.datetime.now 
+            art.save()
+            # todo: 通知用户内容获取完成
+
         return article
+
+loop = asyncio.get_event_loop()
+
+
+class SpiderRes(Resource):
+
+    @login_required
+    def post(self):
+        args = parser.parse_args()
+        url = args.get('url')
+        m5url = md5_url(url)
+        art = ArticleTmp.objects(hashed=m5url).first()
+        if art and art.status == 1:
+            # 已存在，并抓取成功
+            return {'ok': 2, 'article_id': str(art.a_id)}
+        if art is None:
+            art = ArticleTmp()
+            art.hashed = m5url
+            art.url = url
+            art.u_id = g.user_id
+            art.save()
+        data = {'url': url, 'user_id': str(g.user_id), 'art_id': str(art.id)}
+        loop.run_until_complete(self._commitTask(data))
+        return {'ok':1}
 
 
 class ArticleSpiderRes(Resource):
 
+    @login_required
     def post(self):
         args = parser.parse_args()
         url = args.get('url')
+        m5url = md5_url(url)
+        art = ArticleTmp.objects(hashed=m5url).first()
+        if art and art.status == 1:
+            # 已存在，并抓取成功
+            return {'ok': 2, 'article_id': str(art.a_id)}
+        if art is None:
+            art = ArticleTmp()
+            art.hashed = m5url
+            art.url = url
+            art.u_id = g.user_id
+            art.save()
+        data = {'url': url, 'user_id': str(g.user_id), 'art_id': str(art.id)}
+        loop.run_until_complete(self._commitTask(data))
+        return {'ok':1}
+
+    async def _commitTask(self, data):
         session = requests.session()
         headers = {'Content-Type':'application/json'}
-        data = {'url': url}
-        u = 'http://192.144.171.238/spider'
+        url = 'http://192.144.171.238/spider'
         if current_app.config['DEBUG']:
-            u = 'http://127.0.0.1:5001/spider'
-        res = session.post(u, json=data, headers=headers, verify=False)
-        return {'ok':1}
+            url = 'http://127.0.0.1:5001/spider'
+        res = session.post(url, json=data, headers=headers, verify=False)
+
 
 
     def get(self):

@@ -2,6 +2,7 @@
 # author:xsl
 
 from mongoengine import (
+    DynamicDocument,
     Document,
     ObjectIdField,
     StringField,
@@ -79,6 +80,25 @@ class Article(Document):
         data['tag'] = self.tag or ''
 
         return data 
+
+
+class ArticleTmp(DynamicDocument):
+    meta = {
+        'db_alias': DB_NAME,
+        'index_background': True,
+        'indexes': ['hashed', 'a_id']
+    }
+
+    id = ObjectIdField(primary_key=True, default=ObjectId)
+    title = StringField()
+    url = StringField()
+    a_id = ObjectIdField() # 文章id
+    u_id = ObjectIdField() # 用户id
+    hashed = StringField()
+    status = IntField(default=0)  # 0 等待抓取，1 抓取成功 
+    created_at = DateTimeField(default=datetime.datetime.utcnow)
+    updated_at = DateTimeField(default=datetime.datetime.utcnow)
+
 
 
 class Source(Document):

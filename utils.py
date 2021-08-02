@@ -4,6 +4,7 @@
 import json
 import smtplib
 import asyncio
+import hashlib
 from functools import wraps
 from email.mime.text import MIMEText
 from flask import g, make_response, jsonify
@@ -23,6 +24,10 @@ from instance.errors import LoginRequiredError, OperationForbiddenError
 
 from qingstor.sdk.config import Config as QingConfig
 from qingstor.sdk.request import Request as QingRequest
+
+
+def md5_url(url):
+    return hashlib.md5(url.encode(encoding='UTF-8')).hexdigest()
 
 def login_required(func):
     @wraps(func)
