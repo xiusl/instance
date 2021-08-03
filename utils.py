@@ -6,7 +6,7 @@ import smtplib
 import asyncio
 import hashlib
 import requests
-from functools import wraps
+from functools import wraps, partial
 from email.mime.text import MIMEText
 from flask import g, make_response, jsonify
 import aiosmtplib
@@ -271,8 +271,10 @@ async def commitSpiderTask(data):
     headers = {'Content-Type':'application/json'}
     url = 'http://192.144.171.238/spider'
     # url = 'http://127.0.0.1:5001/spider'
-    res = session.post(url, json=data, headers=headers, verify=False)
-
+    #await session.post(url, json=data, headers=headers, verify=False)
+    future = asyncio.get_event_loop().run_in_executor(None,
+        partial(requests.post, url, headers=headers, json=data, verify=False))
+    response = await future
 
 if __name__ == '__main__':
     send_email_msg2('123')
