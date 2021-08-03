@@ -24,6 +24,8 @@ from instance.resource import (
 
     FeedbackRes,
     FeedbacksRes,
+
+    ArticleSpiderRes,
 )
 
 other_map = {
@@ -49,6 +51,8 @@ other_map = {
     FeedbackRes: '/feedbacks/<id>',
     FeedbacksRes: '/feedbacks',
 
+    # fix old app
+    ArticleSpiderRes: '/articles/spider',
 }
 
 def map_other(api):

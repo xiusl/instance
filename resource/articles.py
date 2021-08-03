@@ -130,6 +130,27 @@ class SpiderArticlesRes(Resource):
 
 loop = asyncio.get_event_loop()
 
+class ArticleSpiderRes(Resource):
+
+    @login_required
+    def post(self):
+        args = parser.parse_args()
+        url = args.get('url')
+        m5url = md5_url(url)
+        art = ArticleTmp.objects(hashed=m5url).first()
+        if art and art.status == 1:
+            return {'ok': 2, 'article_id': str(art.a_id)}
+        if art is None:
+            art = ArticleTmp()
+            art.hashed = m5url
+            art.url = url
+            art.u_id = g.user_id
+            art.save()
+        data = {'url': url, 'user_id': str(g.user_id), 'art_id': str(art.id)}
+        loop.run_until_complete(commitSpiderTask(data))
+        return {'ok': 1}
+
+
 
 class SpiderRes(Resource):
 
