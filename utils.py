@@ -5,6 +5,7 @@ import json
 import smtplib
 import asyncio
 import hashlib
+import requests
 from functools import wraps
 from email.mime.text import MIMEText
 from flask import g, make_response, jsonify
@@ -269,8 +270,7 @@ async def commitSpiderTask(data):
     session = requests.session()
     headers = {'Content-Type':'application/json'}
     url = 'http://192.144.171.238/spider'
-    if current_app.config['DEBUG']:
-        url = 'http://127.0.0.1:5001/spider'
+    # url = 'http://127.0.0.1:5001/spider'
     res = session.post(url, json=data, headers=headers, verify=False)
 
 
