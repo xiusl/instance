@@ -30,7 +30,7 @@ type_arr = [
 
 class LocationRes(Resource):
 
-   # @login_required
+    @login_required
     def get(self):
         args = parser.parse_args()
         kw = args.get('keywords') or ''
