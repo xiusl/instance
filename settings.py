@@ -15,11 +15,10 @@ MONGO_URL = os.getenv('MONGO_URL') or 'mongodb://127.0.0.1:27017/instance_db'
 
 from mongoengine import connect
 connect(alias=MONGO_DB, host=MONGO_URL,connect=False)
-
-connect(alias='sp_db', host='mongodb://127.0.0.1:27017/sp_db',connect=False)
-connect(alias='poem_db', host='mongodb://127.0.0.1:27017/poem_db',connect=False)
-connect(alias='log_db', host='mongodb://127.0.0.1:27017/log_db',connect=False)
-connect(alias='potato_db', host='mongodb://127.0.0.1:27017/potato_db',connect=False)
+dbs = ['instance_db', 'sp_db', 'poem_db', 'log_db', 'potato_db']
+for db in dbs:
+  host = 'mongodb://127.0.0.1:27017/{}'.format(db)
+  connect(alias=db, host=host, connect=False)
 
 SMS_ACCOUNT = os.getenv('SMS_ACCOUNT') or ''
 SMS_TOKEN = os.getenv('SMS_TOKEN') or ''
@@ -35,7 +34,7 @@ COS_SECRET_KEY = os.getenv("COS_SECRET_KEY") or "456"
 EMAIL_SMTP = 'smtp.exmail.qq.com'
 EMAIL_SMTP_PORT = '465'
 EMAIL_ADMIN = 'help@xiusl.com'
-EMAIL_ADMIN_PWD = 'He110120.'
+EMAIL_ADMIN_PWD = os.getenv("EMAIL_ADMIN_PWD") or 'He110120.'
 
 WX_AES_KEY = os.getenv('WX_AES_KEY') or ''
 WX_TOKEN = os.getenv('WX_TOKEN') or ''
@@ -51,3 +50,5 @@ QING_SECERT = os.getenv('QING_SECERT')
 
 IM163_APP_KEY = os.getenv('IM163_APP_KEY') or ''
 IM163_APP_SECRET = os.getenv('IM163_APP_SECRET') or ''
+
+GAODE_KEY = os.getenv('GAODE_KEY') or ''
