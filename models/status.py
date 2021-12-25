@@ -3,6 +3,7 @@
 
 from mongoengine import (
     Document,
+    DynamicDocument,
     ObjectIdField,
     StringField,
     IntField,
@@ -10,6 +11,8 @@ from mongoengine import (
     ListField,
     DictField
 )
+from mongoengine.queryset.visitor import Q
+from mongoengine.queryset import QuerySet
 from bson import ObjectId
 import datetime
 import time
@@ -34,6 +37,8 @@ class Status(Document):
     like_count = IntField(default=0)
     bury_count = IntField(default=0)
     topic_id = ObjectIdField()
+    location = DictField()
+    visible = IntField(default=0)
     
     def pack(self, user_id=None):
         datums = {}
@@ -65,7 +70,10 @@ class Status(Document):
         datums['like_count'] = self.like_count
         datums['is_liked'] = self.is_liked(user_id)
         datums['bury_count'] = self.bury_count
-        
+        datums['location'] = self.location
+        datums['visible'] = self.visible
+        datums['at'] = self.at
+        datums['topics'] = self.topics
         return datums
 
 
@@ -88,12 +96,34 @@ class Status(Document):
         user_id = str(user_id)
         return user_id and user_id in self.shielders
 
+    @property
+    def at(self):
+        at = StatusAt.objects(status_id=self.id).first()
+        print(at)
+        if not at:
+            return []
+        print(at.pack())
+        return at.pack()
 
+    @property
+    def topics(self):
+        rels = StatusTopicRef.objects(status_id=self.id)
+        tids = [rel.topic_id for rel in rels]
+        ts = Topic.objects(id__in=tids)
+        print(ts)
+        return [t.pack() for t in ts]
+
+
+class TopicQuerySet(QuerySet):
+
+    def get_any(self, id=None, name=None):
+        return self.filter(Q(name=name)|Q(id=ObjectId(id))).first()
 
 class Topic(Document):
 
     meta = {
-        'db_alias': 'instance_db'
+        'db_alias': 'instance_db',
+        'queryset_class': TopicQuerySet
     }
 
     id = ObjectIdField(primary_key=True, default=ObjectId)
@@ -148,4 +178,25 @@ class Topic(Document):
 
         return datums
 
+class StatusTopicRef(Document):
+    meta = {
+        'db_alias': 'instance_db'
+    }
 
+    id = ObjectIdField(primary_key=True, default=ObjectId)
+    status_id = ObjectIdField()
+    topic_id = ObjectIdField()
+    created_at = DateTimeField(default=datetime.datetime.now)
+
+class StatusAt(DynamicDocument):
+    meta = {
+        'db_alias': 'instance_db'
+    }
+
+    id = ObjectIdField(primary_key=True, default=ObjectId)
+    status_id = ObjectIdField()
+    users = ListField(DictField())
+    created_at = DateTimeField(default=datetime.datetime.now)
+
+    def pack(self):
+        return self.users

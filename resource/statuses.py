@@ -12,7 +12,10 @@ from instance.errors import (
     OperationForbiddenError
 )
 from instance.utils import login_required
-from instance.models import UserTopicRef, User, Status, UserAction, Topic
+from instance.models import (
+    UserTopicRef, User, Status, UserAction, Topic,
+    StatusAt, StatusTopicRef
+)
 
 parser = reqparse.RequestParser()
 
@@ -28,9 +31,25 @@ parser.add_argument('images', type=dict, action='append')
 
 class StatusesRes(Resource):
 
+    def __init__(self):
+        self.reqparse = reqparse.RequestParser()
+        self.config_reqparse()
+        super(StatusesRes, self).__init__()
+
+    def config_reqparse(self):
+        _args = ['id', 'page', 'cursor', 'director', 
+        'count', 'content', 'name', 'desc', 
+        'logo', 'topic_id','topic', 'visible']
+        for arg in _args:
+            self.reqparse.add_argument(arg)
+        self.reqparse.add_argument('images', type=dict, action='append')
+        self.reqparse.add_argument('location', type=dict)
+        self.reqparse.add_argument('at', type=dict, action='append')
+        self.reqparse.add_argument('topics', type=dict, action='append')
+
 
     def get(self):
-        args = parser.parse_args()
+        args = self.reqparser.parse_args()
         page = int(args.get('page') or 1)
         page = page if page > 0 else 1
         count = int(args.get('count') or 10)
@@ -50,21 +69,44 @@ class StatusesRes(Resource):
         return {'count':qs.count(), 'statuses': list([s.pack(user_id=g.user_id) for s in ss])}
 
 
-    @login_required
+    # @login_required
     def post(self):
-        args = parser.parse_args()
+        args = self.reqparse.parse_args()
         content = args.get('content')
         images = args.get('images') or []
         topic = args.get('topic')
+        location = args.get('location')
+        visible = args.get('visible') or 0
+        at = args.get('at') or []
+        topics = args.get('topics') or []
+        print(location)
         user = g.user
         if not content:
             raise MissingRequiredParameter(['content'])
-        s = Status(content=content,images=images)
+        s = Status(content=content,images=images,location=location, visible=visible)
         s.user_id = user.id
         if ObjectId.is_valid(topic):
             s.topic_id = ObjectId(topic)
 
         s.save()
+
+        for u in at:
+            # 异步通知被人@
+            print("动态 {} @ {}".format(s.id, u.get("name")))
+        if len(at) > 0:
+            a = StatusAt(status_id=s.id, users=at)
+            a.save()
+        
+        if len(topics) > 0:
+            for topic in topics:
+                topic_id = topic.get('id')
+                topic_name = topic.get('name')
+                t = Topic.objects.get_any(topic_id, topic_name)
+                if not t:
+                    t = Topic(name=topic.get('name'))
+                    t.save()
+                st = StatusTopicRef(status_id=s.id, topic_id=t.id)
+                st.save()
         return s.pack() 
 
 class StatusRes(Resource):
